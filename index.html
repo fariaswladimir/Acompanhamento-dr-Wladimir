@@ -1,0 +1,489 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Guia do Discente PPGEC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: uma coluna de leitura com seletor de nível fixo no topo; cada seção é uma ferramenta que lê o mesmo estado */
+:root{
+  --bg:#F4F4F7; --surface:#FFFFFF; --ink:#151A33; --muted:#5C6178; --line:#DDDFE8;
+  --accent:#25306A; --accent-soft:#E3E6F3; --ochre:#B3262F; --brand-a:#20284D; --brand-b:#9E2229;
+  --good:#2E7D4F; --good-soft:#E1F2E7; --warn:#A86B00; --warn-soft:#FBEFD6; --bad:#B23A26; --bad-soft:#F8E1DC;
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --f-mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1120; --surface:#171A2E; --ink:#E6E8F2; --muted:#9A9FB8; --line:#2A2E48;
+  --accent:#9DAAF0; --accent-soft:#232A52; --ochre:#F2777D;
+  --good:#6CCB92; --good-soft:#15301F; --warn:#E8B44E; --warn-soft:#33280F; --bad:#F08A76; --bad-soft:#3A1A14; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1120; --surface:#171A2E; --ink:#E6E8F2; --muted:#9A9FB8; --line:#2A2E48;
+  --accent:#9DAAF0; --accent-soft:#232A52; --ochre:#F2777D;
+  --good:#6CCB92; --good-soft:#15301F; --warn:#E8B44E; --warn-soft:#33280F; --bad:#F08A76; --bad-soft:#3A1A14; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:880px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0}
+h1{font-size:clamp(28px,5vw,40px);font-weight:800;letter-spacing:-.02em;line-height:1.1}
+h2{font-size:22px;font-weight:700;letter-spacing:-.01em}
+h3{font-size:16px;font-weight:600}
+p{margin:0}
+.art{font-family:var(--f-mono);font-size:12px;color:var(--accent);background:var(--accent-soft);padding:1px 6px;border-radius:4px;white-space:nowrap}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ochre)}
+
+header.top{background:var(--surface);border-bottom:1px solid var(--line)}
+header.top .brand{background:linear-gradient(100deg,var(--brand-a) 0%,var(--brand-a) 30%,#3A2747 62%,var(--brand-b) 100%);display:flex;justify-content:center;overflow:hidden}
+header.top .brand img{display:block;width:100%;max-width:1121px;height:auto;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)}
+header.top .intro{padding-block:24px 22px;display:grid;gap:10px}
+header.top p.lead{max-width:62ch;color:var(--muted)}
+
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;padding-block:10px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--bg)}
+.seg button{font:600 14px var(--f-body);border:0;background:transparent;color:var(--muted);padding:6px 16px;border-radius:999px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--surface)}
+.seg button:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--ochre);outline-offset:2px}
+.bar nav{display:flex;gap:14px;flex-wrap:wrap;font-size:13px}
+.bar nav a{color:var(--muted);text-decoration:none}
+.bar nav a:hover{color:var(--accent)}
+
+main .wrap{display:grid;gap:44px;padding-block:32px 56px}
+section{display:grid;gap:16px;scroll-margin-top:70px}
+.sec-head{display:grid;gap:4px}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px}
+
+/* status resumo */
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;gap:2px}
+.stat .k{font-size:12px;color:var(--muted)}
+.stat .v{font-family:var(--f-mono);font-size:22px;font-weight:500;font-variant-numeric:tabular-nums}
+.stat .s{font-size:12px}
+.stat{min-width:0}
+.stat .pill{white-space:normal}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.ok{color:var(--good);background:var(--good-soft)}
+.wn{color:var(--warn);background:var(--warn-soft)}
+.no{color:var(--bad);background:var(--bad-soft)}
+.nt{color:var(--muted);background:var(--bg)}
+
+/* linha do tempo */
+.tl-controls{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:end}
+label.field{display:grid;gap:4px;font-size:13px;color:var(--muted)}
+input,select{font:500 14px var(--f-body);color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:7px 9px}
+.progress{display:grid;gap:6px}
+.track{position:relative;height:10px;border-radius:999px;background:var(--bg);border:1px solid var(--line);overflow:hidden}
+.track .fill{position:absolute;inset:0 auto 0 0;background:var(--accent);border-radius:999px}
+.track .ext{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(45deg,var(--warn-soft) 0 4px,transparent 4px 8px)}
+.track-labels{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:11px;color:var(--muted)}
+ol.tl{list-style:none;margin:0;padding:0;display:grid}
+ol.tl li{display:grid;grid-template-columns:86px 18px 1fr;gap:12px;align-items:start}
+ol.tl .when{font-family:var(--f-mono);font-size:13px;text-align:right;padding-top:2px;font-variant-numeric:tabular-nums}
+ol.tl .when small{display:block;color:var(--muted);font-size:11px}
+ol.tl .rail{position:relative;align-self:stretch;display:flex;justify-content:center}
+ol.tl .rail::before{content:"";position:absolute;top:0;bottom:0;width:2px;background:var(--line)}
+ol.tl li:first-child .rail::before{top:8px}
+ol.tl li:last-child .rail::before{bottom:calc(100% - 8px)}
+ol.tl .dot{position:relative;margin-top:5px;width:14px;height:14px;border-radius:50%;background:var(--surface);border:3px solid var(--accent)}
+ol.tl li.past .dot{background:var(--accent)}
+ol.tl li.limit .dot{border-color:var(--bad)}
+ol.tl li.soft .dot{border-color:var(--warn);border-style:dashed}
+ol.tl li.today .dot{border-color:var(--ochre);background:var(--ochre)}
+ol.tl .body{padding-bottom:18px;display:grid;gap:3px;min-width:0}
+ol.tl li.past .body h3{color:var(--muted)}
+ol.tl li.today .when{color:var(--ochre);font-weight:600}
+.note{font-size:13px;color:var(--muted);border-left:3px solid var(--line);padding-left:10px}
+
+/* calculadora */
+.tablebox{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{font-size:12px;font-weight:600;color:var(--muted);text-align:left;padding:6px 6px;border-bottom:1px solid var(--line)}
+td{padding:6px;border-bottom:1px solid var(--line);vertical-align:middle}
+td input[type=text]{width:100%;min-width:150px}
+td input[type=number]{width:64px;font-family:var(--f-mono)}
+td.num{font-family:var(--f-mono);text-align:right;font-variant-numeric:tabular-nums}
+.btn{font:600 14px var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;padding:7px 12px;cursor:pointer}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+.btn.primary:hover{color:var(--surface);filter:brightness(1.08)}
+.icon-btn{border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;padding:4px 8px;border-radius:4px}
+.icon-btn:hover{color:var(--bad);background:var(--bad-soft)}
+.row-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted)}
+.legend b{font-family:var(--f-mono);color:var(--ink)}
+
+/* checklist */
+.checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:14px}
+.check-card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;display:grid;gap:12px;align-content:start}
+.check-card header{display:flex;justify-content:space-between;gap:10px;align-items:start;flex-wrap:wrap}
+ul.req{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+ul.req li{display:grid;grid-template-columns:22px 1fr;gap:8px;align-items:start;font-size:14px}
+ul.req .mark{width:20px;height:20px;border-radius:5px;display:grid;place-items:center;font-size:12px;font-weight:700;margin-top:1px}
+ul.req input[type=checkbox]{width:18px;height:18px;margin:2px 0 0;accent-color:var(--accent)}
+ul.req .auto{font-size:11px;color:var(--muted);font-family:var(--f-mono)}
+
+/* desligamento */
+ul.risks{list-style:none;margin:0;padding:0;display:grid;gap:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+ul.risks li{display:grid;grid-template-columns:6px 1fr auto;gap:14px;padding:13px 16px 13px 0;border-bottom:1px solid var(--line);align-items:start}
+ul.risks li:last-child{border-bottom:0}
+ul.risks .stripe{align-self:stretch;background:var(--line)}
+ul.risks li.hit .stripe{background:var(--bad)}
+ul.risks li.hit{background:var(--bad-soft)}
+ul.risks .txt{display:grid;gap:2px;min-width:0}
+ul.risks .txt p{font-size:13px;color:var(--muted)}
+ul.risks li.hit .txt p{color:var(--ink)}
+
+footer{border-top:1px solid var(--line);background:var(--surface)}
+footer .wrap{padding-block:22px;display:grid;gap:6px;font-size:13px;color:var(--muted)}
+footer a{color:var(--accent)}
+
+@media (max-width:520px){
+  ol.tl li{grid-template-columns:64px 16px 1fr;gap:8px}
+  .bar nav{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.track .fill{transition:width .3s ease}
+</style>
+<style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+
+<header class="top">
+  <div class="brand"><img src="data:image/webp;base64,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" alt="PPGEC UPE: Programa de Pós-Graduação em Engenharia de Computação" width="1121" height="185"></div>
+  <div class="wrap intro">
+    <span class="eyebrow">Regimento Interno 2024</span>
+    <h1>Guia do Discente PPGEC</h1>
+    <p class="lead">O regimento traduzido em ferramentas: veja seus prazos, calcule seu RA, confira se já pode marcar projeto, qualificação ou defesa, e saiba o que leva ao desligamento. Cada regra cita o artigo de origem.</p>
+  </div>
+</header>
+
+<div class="bar">
+  <div class="wrap">
+    <div class="seg" role="group" aria-label="Nível">
+      <button type="button" id="lv-m" aria-pressed="true" data-level="m">Mestrado</button>
+      <button type="button" id="lv-d" aria-pressed="false" data-level="d">Doutorado</button>
+    </div>
+    <nav aria-label="Seções">
+      <a href="#prazos">Prazos</a><a href="#ra">RA e créditos</a><a href="#posso">Posso marcar?</a><a href="#desligamento">Desligamento</a>
+    </nav>
+  </div>
+</div>
+
+<main>
+<div class="wrap">
+
+  <div class="summary" id="summary" aria-live="polite"></div>
+
+  <section id="prazos">
+    <div class="sec-head">
+      <span class="eyebrow">1 · Linha do tempo</span>
+      <h2>Seus prazos</h2>
+      <p class="muted">O prazo começa na primeira matrícula e termina no depósito do trabalho <span class="art">Art. 42</span>.</p>
+    </div>
+    <div class="panel" style="display:grid;gap:18px">
+      <div class="tl-controls">
+        <label class="field" for="start">Mês da primeira matrícula
+          <input type="month" id="start" value="2025-03">
+        </label>
+        <label class="field" for="today">Hoje
+          <input type="month" id="today">
+        </label>
+      </div>
+      <div class="progress" id="progress"></div>
+      <ol class="tl" id="timeline"></ol>
+      <p class="note">Renove a <b>matrícula de vínculo</b> todo semestre, mesmo sem disciplinas. Sem ela, o desligamento é automático <span class="art">Art. 11 §7</span>.</p>
+    </div>
+  </section>
+
+  <section id="ra">
+    <div class="sec-head">
+      <span class="eyebrow">2 · Calculadora</span>
+      <h2>RA e créditos</h2>
+      <p class="muted">RA = Σ(valor do conceito × créditos) ÷ Σ créditos, com A = 4, B = 3, C = 2, D = 0 <span class="art">Art. 28</span>. Cada crédito vale 15 horas <span class="art">Art. 13</span>.</p>
+    </div>
+    <div class="panel" style="display:grid;gap:14px">
+      <div class="tablebox">
+        <table>
+          <thead><tr><th scope="col">Disciplina ou atividade</th><th scope="col">Créditos</th><th scope="col">Conceito</th><th scope="col" style="text-align:right">Pontos</th><th scope="col"><span class="sr" style="position:absolute;left:-9999px">Remover</span></th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <div class="row-actions">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button type="button" class="btn primary" id="add">+ Adicionar disciplina</button>
+          <button type="button" class="btn" id="clear">Limpar exemplos</button>
+        </div>
+        <span class="small muted" id="saved-hint">As linhas iniciais são exemplos. O que você digitar fica salvo só neste navegador.</span>
+      </div>
+      <div class="legend">
+        <span><b>I</b> incompleto, vira A–D em até 6 meses</span>
+        <span><b>T</b> cancelada</span>
+        <span><b>X</b> abandono, conta como D</span>
+        <span><b>O</b> aproveitada de outro curso, dá crédito</span>
+        <span class="art">Art. 27</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="posso">
+    <div class="sec-head">
+      <span class="eyebrow">3 · Checklist</span>
+      <h2>Posso marcar?</h2>
+      <p class="muted">Os itens de créditos e RA são preenchidos pela calculadora. Marque os demais conforme sua situação.</p>
+    </div>
+    <div class="checks" id="checks"></div>
+  </section>
+
+  <section id="desligamento">
+    <div class="sec-head">
+      <span class="eyebrow">4 · Atenção</span>
+      <h2>O que leva ao desligamento</h2>
+      <p class="muted">Situações espalhadas pelo regimento, reunidas aqui. As que a calculadora detecta ficam destacadas.</p>
+    </div>
+    <ul class="risks" id="risks"></ul>
+  </section>
+
+</div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Este guia resume o Regimento Interno do PPGEC aprovado em 01/02/2024 e não o substitui. Em caso de dúvida, vale o texto do regimento; casos omissos são decididos pelo Colegiado <span class="art">Art. 56</span>.</p>
+    <p>Secretaria do PPGEC: <a href="http://www.ppgec.upe.br" target="_blank" rel="noopener">www.ppgec.upe.br</a> · (81) 3184-7548</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const LV = {
+    m:{ name:"Mestrado", min:12, max:24, ext:6, extSplit:"3 + 3 meses", totalCred:30, defendCred:27, discCred:24, projPct:.5,
+        projName:"projeto de dissertação", work:"dissertação" },
+    d:{ name:"Doutorado", min:24, max:48, ext:12, extSplit:"6 + 6 meses", totalCred:44, defendCred:38, discCred:32, projPct:.7,
+        projName:"exame de qualificação", work:"tese" }
+  };
+  const VAL = {A:4,B:3,C:2,D:0,X:0};
+  const store = {
+    get(k,d){ try{ const v=localStorage.getItem("ppgec:"+k); return v?JSON.parse(v):d }catch(e){ return d } },
+    set(k,v){ try{ localStorage.setItem("ppgec:"+k, JSON.stringify(v)) }catch(e){} }
+  };
+  const EXAMPLE = [
+    {n:"Obrigatória 1 (exemplo)",c:4,g:"A"},
+    {n:"Obrigatória 2 (exemplo)",c:4,g:"B"},
+    {n:"Eletiva da área (exemplo)",c:4,g:"B"},
+    {n:"Eletiva geral (exemplo)",c:4,g:"C"}
+  ];
+  let state = {
+    level: store.get("level","m"),
+    rows: store.get("rows", EXAMPLE.map(r=>({...r}))),
+    checks: store.get("checks", {}),
+    start: store.get("start","2025-03")
+  };
+  const $ = s=>document.querySelector(s);
+  const esc = s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const now = new Date();
+  $("#today").value = now.getFullYear()+"-"+String(now.getMonth()+1).padStart(2,"0");
+  $("#start").value = state.start;
+
+  const MESES=["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+  function parseMonth(v){ const [y,m]=(v||"").split("-").map(Number); return (y&&m)?{y,m:m-1}:null }
+  function add(p,n){ const t=p.y*12+p.m+n; return {y:Math.floor(t/12),m:t%12} }
+  function fmt(p){ return MESES[p.m]+"/"+p.y }
+  function diff(a,b){ return (b.y*12+b.m)-(a.y*12+a.m) }
+
+  function calc(){
+    let pts=0, raCred=0, cred=0, ds=0, inc=0;
+    state.rows.forEach(r=>{
+      const c=Math.max(0,Number(r.c)||0);
+      if(r.g in VAL){ pts+=VAL[r.g]*c; raCred+=c; }
+      if(["A","B","C","O"].includes(r.g)) cred+=c;
+      if(r.g==="D"||r.g==="X") ds++;
+      if(r.g==="I") inc++;
+    });
+    return { ra: raCred? pts/raCred : null, cred, ds, inc };
+  }
+
+  function milestones(L, lv){
+    if(lv==="m") return [
+      {at:0, t:"Primeira matrícula", d:"Começa a contar o prazo do curso. O orientador já vem definido da seleção.", a:"Art. 36, 42"},
+      {at:6, t:"Pode começar o Estágio de Docência", d:"Liberado a partir do 2º semestre. É obrigatório por ao menos um semestre e exigido para a defesa.", a:"Art. 20 §2", kind:"soft"},
+      {at:12, t:"Limite para apresentar o projeto de dissertação", d:"Antes do fim do 1º ano, com pelo menos 50% dos créditos em disciplinas. Também é o prazo mínimo para concluir o curso.", a:"Art. 29, 30 §4, 40"},
+      {at:24, t:"Prazo máximo para depositar a dissertação", d:"Pedidos de prorrogação devem ser protocolados antes desta data, com aval do orientador e cronograma.", a:"Art. 40, 43 §1–2", kind:"limit"},
+      {at:30, t:"Fim da prorrogação máxima", d:"Até 6 meses, recomendado em 3 + 3. Só para quem já teve o projeto aprovado.", a:"Art. 43 §3", kind:"limit"}
+    ];
+    return [
+      {at:0, t:"Primeira matrícula", d:"Começa a contar o prazo. Se você migrou do mestrado do PPGEC, o tempo de mestrado também conta.", a:"Art. 42 §ú"},
+      {at:24, t:"Prazo mínimo para concluir", d:"A tese não pode ser defendida antes de 24 meses.", a:"Art. 41", kind:"soft"},
+      {at:30, t:"Limite para o exame de qualificação", d:"Antes do fim do 5º semestre, com 70% dos créditos em disciplinas, Projeto de Pesquisa e RSL cursadas e um artigo A4+ submetido.", a:"Art. 31, 32 §3–4"},
+      {at:36, t:"Limite para o Estágio de Docência", d:"Precisa ser feito até o 3º ano e não pode ser reaproveitado do mestrado.", a:"Art. 20 §3", kind:"soft"},
+      {at:48, t:"Prazo máximo para depositar a tese", d:"Pedidos de prorrogação devem ser protocolados antes desta data, com aval do orientador e cronograma.", a:"Art. 41, 43 §1–2", kind:"limit"},
+      {at:60, t:"Fim da prorrogação máxima", d:"Até 12 meses, recomendado em 6 + 6. Pode haver prazo extra se o artigo estiver em major ou minor revision.", a:"Art. 43 §4–5", kind:"limit"}
+    ];
+  }
+
+  function renderTimeline(){
+    const L=LV[state.level], s=parseMonth($("#start").value), today=parseMonth($("#today").value);
+    const tl=$("#timeline"), pr=$("#progress");
+    if(!s){ tl.innerHTML='<li><span></span><span></span><div class="body muted">Informe o mês da primeira matrícula.</div></li>'; pr.innerHTML=""; return null; }
+    const el = today? diff(s,today) : 0;
+    const ms = milestones(L,state.level);
+    let html="", placed=false;
+    const todayItem = ()=>`<li class="today"><div class="when">${fmt(today)}<small>mês ${el}</small></div><div class="rail"><span class="dot"></span></div><div class="body"><h3>Você está aqui</h3><p class="small muted">${el<0?"Antes do início do curso.":`${Math.max(0,L.max-el)} meses até o prazo máximo.`}</p></div></li>`;
+    ms.forEach(m=>{
+      if(today && !placed && el<m.at){ html+=todayItem(); placed=true; }
+      const cls=[m.kind||"", today && el>=m.at ? "past":""].join(" ");
+      html+=`<li class="${cls}"><div class="when">${fmt(add(s,m.at))}<small>mês ${m.at}</small></div><div class="rail"><span class="dot"></span></div><div class="body"><h3>${m.t}</h3><p class="small muted">${m.d}</p><div><span class="art">${m.a}</span></div></div></li>`;
+    });
+    if(today && !placed) html+=todayItem();
+    tl.innerHTML=html;
+    const span=L.max+L.ext, pct=Math.max(0,Math.min(100, el/span*100)), maxPct=L.max/span*100;
+    pr.innerHTML=`<div class="track" aria-hidden="true"><div class="ext" style="left:${maxPct}%;right:0"></div><div class="fill" style="width:${pct}%"></div></div>
+      <div class="track-labels"><span>início</span><span>prazo máx. · mês ${L.max}</span><span>+${L.ext} prorrogação</span></div>`;
+    return {el, L};
+  }
+
+  function renderRows(){
+    const tb=$("#rows");
+    tb.innerHTML = state.rows.map((r,i)=>{
+      const p = (r.g in VAL) ? (VAL[r.g]*(Number(r.c)||0)).toFixed(0) : "–";
+      const opts=["A","B","C","D","I","T","X","O"].map(g=>`<option${g===r.g?" selected":""}>${g}</option>`).join("");
+      return `<tr>
+        <td><input type="text" id="n-${i}" data-i="${i}" data-f="n" value="${esc(r.n)}" aria-label="Nome da disciplina"></td>
+        <td><input type="number" id="c-${i}" data-i="${i}" data-f="c" min="0" max="12" value="${esc(r.c)}" aria-label="Créditos"></td>
+        <td><select id="g-${i}" data-i="${i}" data-f="g" aria-label="Conceito">${opts}</select></td>
+        <td class="num">${p}</td>
+        <td><button type="button" class="icon-btn" data-del="${i}" aria-label="Remover ${esc(r.n)}">×</button></td>
+      </tr>`;
+    }).join("") || `<tr><td colspan="5" class="muted small" style="padding:14px 6px">Nenhuma disciplina ainda. Use “Adicionar disciplina”.</td></tr>`;
+  }
+
+  function verdict(items){
+    const auto=items.filter(x=>x.auto!==undefined);
+    if(items.every(x=>x.ok)) return '<span class="pill ok">Pode marcar</span>';
+    if(auto.some(x=>!x.ok)) return '<span class="pill no">Ainda não</span>';
+    return '<span class="pill wn">Faltam itens</span>';
+  }
+
+  function renderChecks(c){
+    const L=LV[state.level], lv=state.level, ck=state.checks;
+    const projNeed=Math.ceil(L.discCred*L.projPct);
+    const raOk = c.ra!==null && c.ra>=3;
+    const raTxt = c.ra===null? "sem conceitos": c.ra.toFixed(2).replace(".",",");
+    const m=(k)=>!!ck[lv+":"+k];
+    const proj = lv==="m" ? {
+      title:"Apresentação do projeto de dissertação", arts:"Art. 29–30",
+      items:[
+        {t:`Pelo menos 50% dos créditos em disciplinas (${projNeed} de ${L.discCred})`, auto:`${c.cred} créditos`, ok:c.cred>=projNeed},
+        {t:"Projeto escrito no modelo do Colegiado", k:"p-modelo"},
+        {t:"Data dentro do 1º ano, definida pelo Colegiado", k:"p-data"}
+      ]} : {
+      title:"Exame de qualificação", arts:"Art. 31–32",
+      items:[
+        {t:`Pelo menos 70% dos créditos em disciplinas (${projNeed} de ${L.discCred})`, auto:`${c.cred} créditos`, ok:c.cred>=projNeed},
+        {t:"Cursou Projeto de Pesquisa e Revisão Sistemática da Literatura", k:"q-disc"},
+        {t:"Artigo A4 ou superior submetido ou publicado, como primeiro autor", k:"q-artigo"},
+        {t:"Data antes do fim do 5º semestre", k:"q-data"}
+      ]};
+    const def = {
+      title: lv==="m"?"Defesa da dissertação":"Defesa da tese", arts: lv==="m"?"Art. 44":"Art. 45",
+      items: lv==="m" ? [
+        {t:`Mínimo de ${L.defendCred} créditos`, auto:`${c.cred} créditos`, ok:c.cred>=L.defendCred},
+        {t:"RA igual ou maior que 3,0", auto:`RA ${raTxt}`, ok:raOk},
+        {t:"Projeto de dissertação aprovado (conceito A ou B)", k:"d-proj"},
+        {t:"Artigo aceito em conferência ou periódico com revisão por pares, ou em revisão", k:"d-artigo"},
+        {t:"Estágio de Docência concluído", k:"d-estagio"}
+      ] : [
+        {t:`Mínimo de ${L.defendCred} créditos`, auto:`${c.cred} créditos`, ok:c.cred>=L.defendCred},
+        {t:"RA igual ou maior que 3,0", auto:`RA ${raTxt}`, ok:raOk},
+        {t:"Exame de qualificação aprovado (conceito A ou B)", k:"d-qual"},
+        {t:"Artigo aceito em periódico A4 ou superior, como primeiro autor", k:"d-artigo"},
+        {t:"Estágio de Docência concluído", k:"d-estagio"}
+      ]};
+    [proj,def].forEach(card=>card.items.forEach(it=>{ if(it.k) it.ok=m(it.k) }));
+    const cardHtml = card=>`<article class="check-card">
+      <header><div style="display:grid;gap:4px"><h3>${card.title}</h3><span><span class="art">${card.arts}</span></span></div>${verdict(card.items)}</header>
+      <ul class="req">${card.items.map(it=> it.k
+        ? `<li><input type="checkbox" id="ck-${lv}-${it.k}" data-k="${lv}:${it.k}" ${it.ok?"checked":""}><label for="ck-${lv}-${it.k}">${it.t}</label></li>`
+        : `<li><span class="mark ${it.ok?"ok":"no"}" aria-label="${it.ok?"cumprido":"pendente"}">${it.ok?"✓":"!"}</span><span>${it.t}<br><span class="auto">calculadora: ${it.auto}</span></span></li>`).join("")}</ul>
+      ${card===def?`<p class="note">Depois da defesa: até 3 meses para correções e 30 dias para entregar a versão final, prorrogáveis por mais 30 com justificativa <span class="art">Art. ${lv==="m"?"48":"50"} §3, 52 §2</span>.</p>`:`<p class="note">Conceito C permite repetir uma única vez em até ${lv==="m"?"3":"6"} meses. Conceito D desliga do programa <span class="art">Art. 33</span>.</p>`}
+    </article>`;
+    $("#checks").innerHTML = cardHtml(proj)+cardHtml(def);
+  }
+
+  function renderRisks(c){
+    const lv=state.level, L=LV[lv];
+    const risks=[
+      {t:"RA abaixo de 3,0 no fim do ano letivo", d:`Seu RA atual: ${c.ra===null?"sem conceitos":c.ra.toFixed(2).replace(".",",")}.`, a:"Art. 27 §5", hit:c.ra!==null&&c.ra<3},
+      {t:"Conceito D em mais de uma disciplina, ou duas vezes na mesma", d:`Abandono (X) conta como D. Você tem ${c.ds} conceito${c.ds===1?"":"s"} D ou X.`, a:"Art. 27 §3, §6", hit:c.ds>1},
+      {t:"Não renovar a matrícula de vínculo no semestre", d:"Vale mesmo sem disciplinas. A reintegração depende do Colegiado e do CEPE.", a:"Art. 11 §7"},
+      {t:"Não voltar depois do trancamento", d:"Trancamento é de no máximo um semestre, depende de aval do orientador e aprovação do Colegiado.", a:"Art. 11 §3"},
+      {t:`Reprovação no ${L.projName}`, d:"Conceito D desliga. Conceito C permite repetir uma vez.", a:"Art. 33 §2–3"},
+      {t:"Ficar mais de 1 mês sem orientador", d:"Ao deixar o orientador, você fica com o coordenador e tem 1 mês para apresentar candidatos a novo orientador.", a:"Art. 36 §4"},
+      {t:"Estourar o prazo máximo ou a prorrogação", d:`${L.name}: ${L.max} meses, mais até ${L.ext} de prorrogação (${L.extSplit}).`, a:"Art. 43 §6"},
+      {t:"Não entregar a versão final após a defesa", d:"30 dias depois das correções, mais 30 com justificativa.", a:"Art. 52 §2"}
+    ];
+    if(c.inc) risks.splice(2,0,{t:"Conceito I (incompleto) pendente", d:`Você tem ${c.inc} disciplina${c.inc>1?"s":""} com I. Em até 6 meses ele vira A, B, C ou D.`, a:"Art. 27 §2", hit:true});
+    $("#risks").innerHTML = risks.map(r=>`<li class="${r.hit?"hit":""}"><span class="stripe"></span><div class="txt"><h3>${r.t}</h3><p>${r.d}</p></div><div style="display:grid;gap:6px;justify-items:end">${r.hit?'<span class="pill no">Atenção</span>':""}<span class="art">${r.a}</span></div></li>`).join("")
+      + `<li><span class="stripe"></span><div class="txt"><h3>Bolsistas: falta não justificada em evento convocado</h3><p>Eventos convocados com 72 h de antecedência são obrigatórios. A falta não desliga, mas cancela a bolsa. Vínculo empregatício só com autorização do orientador e da coordenação.</p></div><div style="display:grid;justify-items:end"><span class="art">Art. 11 §8</span></div></li>`;
+  }
+
+  function renderSummary(c, t){
+    const L=LV[state.level];
+    const raCls = c.ra===null?"nt":c.ra>=3?"ok":"no";
+    const left = t? L.max - t.el : null;
+    const leftCls = left===null?"nt": left<0?"no": left<=6?"wn":"ok";
+    $("#summary").innerHTML = `
+      <div class="stat"><span class="k">Rendimento Acadêmico</span><span class="v">${c.ra===null?"–":c.ra.toFixed(2).replace(".",",")}</span><span class="s"><span class="pill ${raCls}">${c.ra===null?"sem conceitos":c.ra>=3?"acima de 3,0":"abaixo de 3,0"}</span></span></div>
+      <div class="stat"><span class="k">Créditos</span><span class="v">${c.cred}<span class="muted" style="font-size:15px"> / ${L.totalCred}</span></span><span class="s muted">${L.defendCred} para defender</span></div>
+      <div class="stat"><span class="k">Conceitos D ou X</span><span class="v">${c.ds}</span><span class="s"><span class="pill ${c.ds>1?"no":c.ds===1?"wn":"ok"}">${c.ds>1?"desligamento":c.ds===1?"limite atingido":"ok"}</span></span></div>
+      <div class="stat"><span class="k">Meses até o prazo máximo</span><span class="v">${left===null?"–":Math.max(left,0)}</span><span class="s"><span class="pill ${leftCls}">${left===null?"informe a data":left<0?"prazo vencido":left<=6?"peça prorrogação a tempo":"no prazo"}</span></span></div>`;
+  }
+
+  function renderAll(){
+    document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.level===state.level));
+    const c=calc(), t=renderTimeline();
+    renderSummary(c,t); renderChecks(c); renderRisks(c);
+  }
+  function save(){ store.set("rows",state.rows); store.set("checks",state.checks); store.set("level",state.level); store.set("start",$("#start").value) }
+
+  document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>{ state.level=b.dataset.level; save(); renderAll(); }));
+  $("#start").addEventListener("input",()=>{ save(); renderAll(); });
+  $("#today").addEventListener("input",renderAll);
+  $("#rows").addEventListener("input",e=>{
+    const el=e.target, i=+el.dataset.i, f=el.dataset.f; if(!f) return;
+    state.rows[i][f] = f==="c" ? el.value : el.value;
+    save();
+    if(f!=="n"){ const p=state.rows[i]; el.closest("tr").querySelector(".num").textContent = (p.g in VAL)?(VAL[p.g]*(Number(p.c)||0)).toFixed(0):"–"; }
+    renderAll();
+  });
+  $("#rows").addEventListener("click",e=>{
+    const d=e.target.closest("[data-del]"); if(!d) return;
+    state.rows.splice(+d.dataset.del,1); save(); renderRows(); renderAll();
+  });
+  $("#add").addEventListener("click",()=>{
+    state.rows.push({n:"",c:4,g:"A"}); save(); renderRows(); renderAll();
+    const ins=document.querySelectorAll("#rows input[type=text]"); ins[ins.length-1]?.focus();
+  });
+  $("#clear").addEventListener("click",()=>{
+    state.rows = state.rows.filter(r=>!/\(exemplo\)$/.test(r.n)); save(); renderRows(); renderAll();
+  });
+  $("#checks").addEventListener("change",e=>{
+    const k=e.target.dataset.k; if(!k) return;
+    state.checks[k]=e.target.checked; save(); renderAll();
+  });
+
+  renderRows(); renderAll();
+})();
+</script>
+
+</body>
+</html>
