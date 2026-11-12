@@ -254,7 +254,7 @@ footer a{color:var(--accent)}
     <div class="panel" style="display:grid;gap:18px">
       <div class="tl-controls">
         <label class="field" for="start">Mês da primeira matrícula
-          <input type="month" id="start" value="2025-03">
+          <input type="month" id="start" value="2025-08">
         </label>
         <label class="field" for="today">Hoje
           <input type="month" id="today">
@@ -363,16 +363,19 @@ footer a{color:var(--accent)}
     set(k,v){ try{ localStorage.setItem(PFX+k, JSON.stringify(v)) }catch(e){} }
   };
   const EXAMPLE = [
-    {n:"Obrigatória 1 (exemplo)",c:4,g:"A"},
-    {n:"Obrigatória 2 (exemplo)",c:4,g:"B"},
-    {n:"Eletiva da área (exemplo)",c:4,g:"B"},
-    {n:"Eletiva geral (exemplo)",c:4,g:"C"}
+    {n:"Engenharia de Requisitos (cursada 2020.1, aproveitada)",c:4,g:"A"},
+    {n:"Mineração de Dados (cursada 2023.1, aproveitada)",c:4,g:"A"},
+    {n:"Modelagem Conceitual e Raciocínio Automático (2025/2)",c:4,g:"B"},
+    {n:"Probabilidade e Processos Estocásticos (cursada 2020.2, aproveitada)",c:4,g:"B"},
+    {n:"Aplicações em Engenharia de Software (cursada 2020.1, aproveitada)",c:4,g:"A"},
+    {n:"Metodologia Científica e Didática do Ensino Superior (cursada 2023.1, aproveitada)",c:4,g:"A"},
+    {n:"Tópicos Avançados em Engenharia de Software (cursada 2022.2, aproveitada)",c:4,g:"A"}
   ];
   let state = {
-    level: store.get("level","m"),
+    level: store.get("level","d"),
     rows: store.get("rows", TOKEN ? [] : EXAMPLE.map(r=>({...r}))),
     checks: store.get("checks", {}),
-    start: store.get("start","2025-03")
+    start: store.get("start","2025-08")
   };
   const $ = s=>document.querySelector(s);
   const esc = s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
