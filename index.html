@@ -785,7 +785,12 @@ tr.g-soon td:first-child{box-shadow:inset 3px 0 0 var(--warn)}
       {sem:"2026.2",per:"10/08 a 11/12/2026",disc:"Tópicos Especiais em Marketing, Empreendedorismo e TI",sup:"Ivaldir H. de Farias Junior",h:"",aula:false,rel:false,sit:"Em andamento"},
       {sem:"2027",per:"",disc:"",sup:"",h:"",aula:false,rel:false,sit:"Planejado"}
     ],
-    semi:[],
+    semi:[
+      {d:"",t:"Aula Magna 2025.2",tipo:"pal",q:1,hm:2,cert:true},
+      {d:"",t:"Curso do MicroFuturo sobre IA",tipo:"curso",q:1,hm:3,cert:true},
+      {d:"",t:"Curso de AI Agents (LinkedIn Learning)",tipo:"curso",q:1,hm:2,cert:true},
+      {d:"",t:"Defesa de mestrado",tipo:"bm",q:1,hm:3,cert:true}
+    ],
     art:[],
     qual:{titulo:"",data:"",interno:"",externo:"",terceiro:"",suplente:"",entregue:false,res:""},
     def:{data:"",banca:"",ra:false},
@@ -801,6 +806,7 @@ tr.g-soon td:first-child{box-shadow:inset 3px 0 0 var(--warn)}
 
   let G; try{ G=JSON.parse(localStorage.getItem(KEY)) }catch(e){ G=null }
   if(!G||G.v!==1) G=JSON.parse(JSON.stringify(SEED));
+  if(!G.semi||!G.semi.length) G.semi=JSON.parse(JSON.stringify(SEED.semi));
   function save(){ G.updated=new Date().toISOString(); try{ localStorage.setItem(KEY,JSON.stringify(G)) }catch(e){} renderAll(); }
 
   /* ---------- definições ---------- */
@@ -824,6 +830,7 @@ tr.g-soon td:first-child{box-shadow:inset 3px 0 0 var(--warn)}
     rep:{n:"Representação discente",h:3,u:"semestre",g:"rep"}
   };
   const GLIM={ap:20,pa:20,curso:20,rep:20};
+  const semH=r=>{ const t=STIPO[r.tipo]; if(r.hm!==""&&r.hm!=null&&!isNaN(Number(r.hm))) return Number(r.hm); return t?t.h*(Number(r.q)||0):0; };
   const QUALIS=["A1","A2","A3","A4","B1","B2","B3","B4","C","Sem Qualis","Não sei"];
   const QA4=["A1","A2","A3","A4"];
   const AST=["Em escrita","Submetido","Em revisão","Aceito","Publicado","Rejeitado"];
@@ -833,7 +840,7 @@ tr.g-soon td:first-child{box-shadow:inset 3px 0 0 var(--warn)}
   function credTotal(ex){ return CRED.filter(c=>c.k!==ex).reduce((s,c)=>s+Math.min(c.req,Math.max(0,Number(G.cred[c.k].o)||0)),0); }
   function semHoras(){
     const byG={}; let livre=0;
-    G.semi.forEach(r=>{ const t=STIPO[r.tipo]; if(!t) return; const h=t.h*(Number(r.q)||0); if(t.g) byG[t.g]=(byG[t.g]||0)+h; else livre+=h; });
+    G.semi.forEach(r=>{ const t=STIPO[r.tipo]; if(!t) return; const h=semH(r); if(t.g) byG[t.g]=(byG[t.g]||0)+h; else livre+=h; });
     let tot=livre; Object.keys(byG).forEach(g=>tot+=Math.min(GLIM[g],byG[g]));
     return {tot, byG};
   }
@@ -857,7 +864,7 @@ tr.g-soon td:first-child{box-shadow:inset 3px 0 0 var(--warn)}
   const NEW={
     acoes:()=>({d:"",t:"",cat:"Outro",ok:false}),
     est:()=>({sem:"",per:"",disc:"",sup:"",h:"",aula:false,rel:false,sit:"Planejado"}),
-    semi:()=>({d:"",t:"",tipo:"pal",q:1,cert:false}),
+    semi:()=>({d:"",t:"",tipo:"pal",q:1,hm:"",cert:false}),
     art:()=>({t:"",vei:"",tipo:"Periódico",qualis:"Não sei",st:"Em escrita",pa:true,rel:true}),
     pend:()=>({t:"",ok:false})
   };
@@ -907,10 +914,11 @@ tr.g-soon td:first-child{box-shadow:inset 3px 0 0 var(--warn)}
       {f:"d",l:"Data",t:"date"},{f:"t",l:"Evento ou atividade"},
       {f:"tipo",l:"Tipo",t:"select",o:Object.entries(STIPO).map(([k,v])=>[k,`${v.n} (${v.h} h/${v.u})`])},
       {f:"q",l:"Qtd.",t:"number",w:"60px"},
-      {f:"h",l:"Horas",t:"calc",fn:r=>{const t=STIPO[r.tipo];return t?t.h*(Number(r.q)||0):0}},
+      {f:"h",l:"Pela norma",t:"calc",fn:r=>{const t=STIPO[r.tipo];return t?t.h*(Number(r.q)||0):0}},
+      {f:"hm",l:"Horas reconhecidas",t:"number",w:"70px"},
       {f:"cert",l:"Certificado na secretaria",t:"check"}
     ],{rowCls:r=>(r.d&&r.d<"2025-08-01")?"g-late":""})+`<div class="g-bar" role="progressbar" aria-valuemin="0" aria-valuemax="45" aria-valuenow="${Math.min(45,sh.tot)}"><span style="width:${Math.min(100,sh.tot/45*100)}%"></span></div>
-      <p class="small muted">${sh.tot} de 45 h válidas. Limite de 20 h por grupo: apresentações ${Math.min(20,sh.byG.ap||0)}/20 · participação em conferências ${Math.min(20,sh.byG.pa||0)}/20 · cursos ${Math.min(20,sh.byG.curso||0)}/20 · representação ${Math.min(20,sh.byG.rep||0)}/20. Só valem atividades a partir de 08/2025 (linhas anteriores ficam em vermelho); horas do mestrado não são aproveitadas <span class="art">Art. 19 §6</span>.</p>`;
+      <p class="small muted">${sh.tot} de 45 h válidas. Limite de 20 h por grupo: apresentações ${Math.min(20,sh.byG.ap||0)}/20 · participação em conferências ${Math.min(20,sh.byG.pa||0)}/20 · cursos ${Math.min(20,sh.byG.curso||0)}/20 · representação ${Math.min(20,sh.byG.rep||0)}/20. “Horas reconhecidas” é o que a secretaria lançou; se ficar vazio, vale o cálculo pela norma. Só valem atividades a partir de 08/2025 (linhas anteriores ficam em vermelho); horas do mestrado não são aproveitadas <span class="art">Art. 19 §6</span>.</p>`;
 
     // artigos
     $("#g-art").innerHTML=table("art",[
