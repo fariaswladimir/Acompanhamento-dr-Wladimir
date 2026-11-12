@@ -197,6 +197,28 @@ footer a{color:var(--accent)}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 .track .fill{transition:width .3s ease}
+.g-tools{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center}
+.g-box{padding:0}
+.g-box>summary{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;padding:14px 18px;cursor:pointer;list-style:none}
+.g-box>summary::-webkit-details-marker{display:none}
+.g-box>summary::before{content:"▸";color:var(--muted);transition:transform .15s}
+.g-box[open]>summary::before{transform:rotate(90deg)}
+.g-in{display:grid;gap:12px;padding:0 18px 18px}
+.g-in td input[type=date]{min-width:130px}
+.g-in td select{max-width:220px}
+tr.g-done td{opacity:.55}
+tr.g-late td:first-child,tr.g-late td:nth-child(2){box-shadow:inset 3px 0 0 var(--bad)}
+tr.g-soon td:first-child{box-shadow:inset 3px 0 0 var(--warn)}
+.g-list{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.g-chk{display:flex;gap:8px;align-items:baseline;font-size:14px}
+.g-chk .pill{flex:none}
+.g-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px 14px}
+.g-form .field{display:grid;gap:4px;font-size:13px;color:var(--muted)}
+.g-inline{display:flex;gap:8px;align-items:center;font-size:14px}
+.g-chips{display:flex;flex-wrap:wrap;gap:8px}
+.g-chip{display:inline-flex;gap:6px;align-items:center;border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:14px;background:var(--surface)}
+.g-bar{height:10px;border-radius:999px;background:var(--bg);border:1px solid var(--line);overflow:hidden}
+.g-bar span{display:block;height:100%;background:var(--good)}
 </style>
 <style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
@@ -230,7 +252,7 @@ footer a{color:var(--accent)}
       <button type="button" id="lv-d" aria-pressed="true" data-level="d" data-view="live">Doutorado</button>
     </div>
     <nav aria-label="Seções">
-      <a href="#prazos">Prazos</a><a href="#ra">RA e créditos</a><a href="#posso">Posso marcar?</a><a href="#desligamento">Desligamento</a><a href="#apoio">Apoio</a>
+      <a href="#gestao">Gestão</a><a href="#prazos">Prazos</a><a href="#ra">RA e créditos</a><a href="#posso">Posso marcar?</a><a href="#desligamento">Desligamento</a><a href="#apoio">Apoio</a>
     </nav>
   </div>
 </div>
@@ -254,6 +276,25 @@ footer a{color:var(--accent)}
   </div>
 
   <div class="summary" id="summary" aria-live="polite"></div>
+
+  <section id="gestao">
+    <div class="sec-head">
+      <span class="eyebrow">0 · Gestão</span>
+      <h2>Gestão do doutorado</h2>
+      <p class="muted">Painel para planejar o que vem pela frente. Tudo aqui é editável e fica salvo só neste navegador. Use “Exportar” para guardar uma cópia ou levar para outro computador.</p>
+    </div>
+    <div class="summary" id="g-summary"></div>
+    <div class="g-tools"><button type="button" class="btn" id="g-export">Exportar dados (JSON)</button><label class="btn" style="cursor:pointer">Importar JSON<input type="file" id="g-import" accept="application/json,.json" hidden></label><button type="button" class="btn" id="g-reset">Restaurar dados iniciais</button><span class="small muted" id="g-upd"></span></div>
+    <details class="panel g-box" open><summary><h3>Próximas ações e marcos</h3><span class="small muted">Atrasadas em vermelho, próximos 3 meses em amarelo</span></summary><div id="g-acoes" class="g-in"></div></details>
+    <details class="panel g-box" open><summary><h3>Créditos por componente</h3><span class="small muted">44 créditos no total</span></summary><div id="g-cred" class="g-in"></div></details>
+    <details class="panel g-box" open><summary><h3>Estágio Docência</h3><span class="small muted">2 semestres no doutorado</span></summary><div id="g-est" class="g-in"></div></details>
+    <details class="panel g-box"><summary><h3>Seminário de Complementação</h3><span class="small muted">45 horas até fev/2029</span></summary><div id="g-semi" class="g-in"></div></details>
+    <details class="panel g-box"><summary><h3>Artigos e produção</h3><span class="small muted">requisito de qualificação e defesa</span></summary><div id="g-art" class="g-in"></div></details>
+    <details class="panel g-box"><summary><h3>Exame de qualificação</h3><span class="small muted">até o fim do 5º semestre</span></summary><div id="g-qual" class="g-in"></div></details>
+    <details class="panel g-box"><summary><h3>Defesa da tese</h3><span class="small muted">a partir de ago/2027</span></summary><div id="g-def" class="g-in"></div></details>
+    <details class="panel g-box"><summary><h3>Matrícula de vínculo</h3><span class="small muted">renovar todo semestre</span></summary><div id="g-mat" class="g-in"></div></details>
+    <details class="panel g-box" open><summary><h3>Pendências com a secretaria</h3><span class="small muted">o que precisa ser resolvido</span></summary><div id="g-pend" class="g-in"></div></details>
+  </section>
 
   <section id="prazos">
     <div class="sec-head">
@@ -664,7 +705,7 @@ footer a{color:var(--accent)}
 <script>
 (function(){
   const H={
-    m1:{eb:"Histórico · Mestrado",title:"1ª vez: 2019/2 a 2020/2",note:"Somente leitura. Linhas de matrícula em duplicidade (“Inscrito”) foram omitidas.",
+    m1:{eb:"Histórico · Mestrado",title:"1ª vez: 08/2019 a 08/2021 (cancelado)",note:"Seleção Regular Mestrado 2019.2. Vínculo cancelado, sem defesa. Somente leitura; linhas de matrícula em duplicidade (“Inscrito”) foram omitidas.",
       rows:[
         ["2019/2","Aplicações em Engenharia de Software",4,"A",""],
         ["2019/2","Mineração de Dados",4,"C","Conceito C* no histórico"],
@@ -675,8 +716,8 @@ footer a{color:var(--accent)}
         ["2020/1","Tópicos Avançados em Engenharia de Software",4,"A","Online"],
         ["2020/2","Probabilidade e Processos Estocásticos",4,"B","Freq. 90%"]],
       acts:[["2021/1","Horas Complementares (Seminário)",3,45,"Completo",""]],
-      pend:[["30/07/2021","Estágio Docência","Pendente nesta entrada (admissão Seleção Regular Mestrado 2019.2)"]]},
-    m2:{eb:"Histórico · Mestrado",title:"2ª vez: 2022/1 a 2023/1",note:"Somente leitura. Várias disciplinas foram aproveitadas da primeira entrada.",
+      pend:[["30/07/2021","Estágio Docência","Pendente no sistema, mas o vínculo desta entrada foi cancelado em 08/2021, então não há o que cumprir"]]},
+    m2:{eb:"Histórico · Mestrado",title:"2ª vez: 08/2022 a 07/2024 (concluído)",note:"Seleção Regular Mestrado 2022.2. Dissertação defendida em 29/07/2024: “Conflitos em Times de Desenvolvimento de Software: Modelo e Instrumento de Mensuração com Análise baseada em Aprendizado de Máquina”. Orientadoras: Maria Lencastre Pinheiro de Menezes e Cruz e Roberta Andrade de Araujo Fagundes. Várias disciplinas foram aproveitadas da primeira entrada.",
       rows:[
         ["2022/1","Aplicações em Engenharia de Software",4,"A","Aproveitada da 1ª entrada (cursada em 2019/2)"],
         ["2022/2","Engenharia de Requisitos",4,"A","Modelo híbrido"],
@@ -710,6 +751,244 @@ footer a{color:var(--accent)}
     $("#h-sum").innerHTML=`<b>RA: ${ra}</b> <span class="muted small">(${pts} ÷ ${cr}, ponderado pelos créditos, Art. 28)</span><br><span class="small muted">Créditos cursados: ${cr} · com direito a crédito: ${got}</span>`;
   }
   document.querySelector(".seg").addEventListener("click",e=>{const b=e.target.closest("button[data-view]"); if(b) show(b.dataset.view);});
+})();
+</script>
+<script>
+/* Gestão do doutorado: dados editáveis guardados só neste navegador (localStorage), com exportar/importar JSON */
+(function(){
+  const KEY="ppgec:gestao:v1";
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const hoje=()=>{const d=new Date();return d.toISOString().slice(0,10)};
+  const fmtD=v=>{ if(!v) return "–"; const [y,m,d]=v.split("-"); return d+"/"+m+"/"+y; };
+
+  const SEED={
+    v:1, updated:null,
+    acoes:[
+      {d:"2026-12-11",t:"Concluir o Estágio Docência 1 e entregar o relatório (atividades, aprendizados, sugestões) ao prof. Ivaldir",cat:"Estágio",ok:false},
+      {d:"2026-12-15",t:"Pedir à secretaria o ajuste da previsão do Estágio Docência (consta 01/01/2026, já vencida)",cat:"Secretaria",ok:false},
+      {d:"2027-01-31",t:"Renovar a matrícula de vínculo de 2027.1 (confirmar a data no calendário do PPGEC)",cat:"Vínculo",ok:false},
+      {d:"2027-02-28",t:"Definir supervisor e disciplina do Estágio Docência 2",cat:"Estágio",ok:false},
+      {d:"2027-08-01",t:"Fim do 2º ano: RA precisa estar ≥ 3,0. A partir daqui a defesa já é possível (mínimo de 24 meses)",cat:"Marco",ok:false},
+      {d:"2028-02-29",t:"Limite para o exame de qualificação (fim do 5º semestre)",cat:"Qualificação",ok:false},
+      {d:"2028-08-01",t:"Limite para concluir o Estágio Docência (até o 3º ano)",cat:"Estágio",ok:false},
+      {d:"2029-02-01",t:"Limite para comprovar as 45 h do Seminário de Complementação",cat:"Seminário",ok:false},
+      {d:"2029-08-01",t:"Prazo máximo do doutorado (48 meses); prorrogação só com qualificação aprovada",cat:"Marco",ok:false}
+    ],
+    cred:{
+      disc:{o:24,n:"7 disciplinas, 28 créditos cursados (6 aproveitadas). Confirmar com a secretaria o enquadramento em obrigatórias e eletivas."},
+      rsl:{o:4,n:"2026/1, nota 10, conceito A"},
+      proj:{o:0,n:"Cursado; falta lançar o conceito"},
+      sem:{o:0,n:""}, qual:{o:0,n:""}, def:{o:0,n:""}
+    },
+    est:[
+      {sem:"2026.2",per:"10/08 a 11/12/2026",disc:"Tópicos Especiais em Marketing, Empreendedorismo e TI",sup:"Ivaldir H. de Farias Junior",h:"",aula:false,rel:false,sit:"Em andamento"},
+      {sem:"2027",per:"",disc:"",sup:"",h:"",aula:false,rel:false,sit:"Planejado"}
+    ],
+    semi:[],
+    art:[],
+    qual:{titulo:"",data:"",interno:"",externo:"",terceiro:"",suplente:"",entregue:false,res:""},
+    def:{data:"",banca:"",ra:false},
+    pend:[
+      {t:"Lançar o conceito do Projeto de Pesquisa no histórico do doutorado",ok:false},
+      {t:"Ajustar a previsão do Estágio Docência do doutorado (01/01/2026)",ok:false},
+      {t:"Vincular o Estágio Docência concluído em 2024/2 à pendência do 2º mestrado (04/08/2023)",ok:false},
+      {t:"Confirmar a origem de Mineração de Dados (registrada como 2023.1) e de Aplicações em ES (registrada como 2020.1)",ok:false},
+      {t:"Confirmar quais disciplinas contam como obrigatórias e quais como eletivas",ok:false}
+    ],
+    mat:{"2025.2":true,"2026.1":true,"2026.2":true}
+  };
+
+  let G; try{ G=JSON.parse(localStorage.getItem(KEY)) }catch(e){ G=null }
+  if(!G||G.v!==1) G=JSON.parse(JSON.stringify(SEED));
+  function save(){ G.updated=new Date().toISOString(); try{ localStorage.setItem(KEY,JSON.stringify(G)) }catch(e){} renderAll(); }
+
+  /* ---------- definições ---------- */
+  const CRED=[
+    {k:"disc",n:"Disciplinas obrigatórias e eletivas",req:24,a:"Art. 15"},
+    {k:"rsl",n:"Revisão Sistemática da Literatura",req:4,a:"Art. 15"},
+    {k:"proj",n:"Projeto de Pesquisa",req:4,a:"Art. 15, 19 §6"},
+    {k:"sem",n:"Seminário de Complementação",req:3,a:"Art. 15, 16"},
+    {k:"qual",n:"Exame de qualificação",req:3,a:"Art. 31–32"},
+    {k:"def",n:"Defesa da tese",req:6,a:"Art. 45"}
+  ];
+  const STIPO={
+    ap_int:{n:"Apresentação de artigo em conferência internacional",h:5,u:"artigo",g:"ap"},
+    ap_nac:{n:"Apresentação de artigo em conferência nacional",h:3,u:"artigo",g:"ap"},
+    pa_int:{n:"Participação em conferência internacional",h:5,u:"dia",g:"pa"},
+    pa_nac:{n:"Participação em conferência nacional",h:3,u:"dia",g:"pa"},
+    pal:{n:"Palestra",h:1,u:"palestra",g:null},
+    curso:{n:"Curso presencial ou treinamento",h:3,u:"curso",g:"curso"},
+    bm:{n:"Banca de mestrado",h:3,u:"banca",g:null},
+    bd:{n:"Banca de doutorado",h:3,u:"banca",g:null},
+    rep:{n:"Representação discente",h:3,u:"semestre",g:"rep"}
+  };
+  const GLIM={ap:20,pa:20,curso:20,rep:20};
+  const QUALIS=["A1","A2","A3","A4","B1","B2","B3","B4","C","Sem Qualis","Não sei"];
+  const QA4=["A1","A2","A3","A4"];
+  const AST=["Em escrita","Submetido","Em revisão","Aceito","Publicado","Rejeitado"];
+  const SEMS=["2025.2","2026.1","2026.2","2027.1","2027.2","2028.1","2028.2","2029.1"];
+
+  /* ---------- cálculos ---------- */
+  function credTotal(ex){ return CRED.filter(c=>c.k!==ex).reduce((s,c)=>s+Math.min(c.req,Math.max(0,Number(G.cred[c.k].o)||0)),0); }
+  function semHoras(){
+    const byG={}; let livre=0;
+    G.semi.forEach(r=>{ const t=STIPO[r.tipo]; if(!t) return; const h=t.h*(Number(r.q)||0); if(t.g) byG[t.g]=(byG[t.g]||0)+h; else livre+=h; });
+    let tot=livre; Object.keys(byG).forEach(g=>tot+=Math.min(GLIM[g],byG[g]));
+    return {tot, byG};
+  }
+  const artSubmetido=()=>G.art.some(a=>QA4.includes(a.qualis)&&["Submetido","Em revisão","Aceito","Publicado"].includes(a.st));
+  const artDefesa=()=>G.art.some(a=>a.tipo==="Periódico"&&QA4.includes(a.qualis)&&["Aceito","Publicado"].includes(a.st)&&a.pa&&a.rel);
+  const estOk=()=>G.est.filter(e=>e.sit==="Concluído").length;
+
+  /* ---------- tabela editável genérica ---------- */
+  function table(list,cols,opts){
+    const head=cols.map(c=>`<th scope="col"${c.right?' style="text-align:right"':''}>${c.l}</th>`).join("")+`<th scope="col"><span style="position:absolute;left:-9999px">Remover</span></th>`;
+    const body=G[list].map((r,i)=>"<tr"+(opts&&opts.rowCls?` class="${opts.rowCls(r)}"`:"")+">"+cols.map(c=>{
+      const v=r[c.f], at=`data-l="${list}" data-i="${i}" data-f="${c.f}"`;
+      if(c.t==="calc") return `<td class="num">${c.fn(r)}</td>`;
+      if(c.t==="check") return `<td style="text-align:center"><input type="checkbox" ${at} ${v?"checked":""} aria-label="${esc(c.l)}"></td>`;
+      if(c.t==="select") return `<td><select ${at} aria-label="${esc(c.l)}">${c.o.map(o=>{const val=Array.isArray(o)?o[0]:o, lab=Array.isArray(o)?o[1]:o; return `<option value="${esc(val)}"${val===v?" selected":""}>${esc(lab)}</option>`}).join("")}</select></td>`;
+      return `<td><input type="${c.t||"text"}" ${at} value="${esc(v)}" aria-label="${esc(c.l)}"${c.w?` style="width:${c.w}"`:""}></td>`;
+    }).join("")+`<td><button type="button" class="icon-btn" data-del="${list}" data-i="${i}" aria-label="Remover linha">×</button></td></tr>`).join("");
+    return `<div class="tablebox"><table><thead><tr>${head}</tr></thead><tbody>${body||`<tr><td colspan="${cols.length+1}" class="muted small" style="padding:12px 6px">Nada lançado ainda.</td></tr>`}</tbody></table></div>
+      <div><button type="button" class="btn" data-add="${list}">+ Adicionar</button></div>`;
+  }
+  const NEW={
+    acoes:()=>({d:"",t:"",cat:"Outro",ok:false}),
+    est:()=>({sem:"",per:"",disc:"",sup:"",h:"",aula:false,rel:false,sit:"Planejado"}),
+    semi:()=>({d:"",t:"",tipo:"pal",q:1,cert:false}),
+    art:()=>({t:"",vei:"",tipo:"Periódico",qualis:"Não sei",st:"Em escrita",pa:true,rel:true}),
+    pend:()=>({t:"",ok:false})
+  };
+  const chk=(ok,t,a)=>`<li class="g-chk"><span class="pill ${ok?"ok":"no"}">${ok?"ok":"falta"}</span><span>${t}${a?` <span class="art">${a}</span>`:""}</span></li>`;
+  const mesesAte=d=>{ const a=new Date(), b=new Date(d+"T00:00:00"); return Math.round((b-a)/2629800000); };
+
+  /* ---------- render ---------- */
+  function renderAll(){
+    const today=hoje();
+    const abertas=G.acoes.filter(a=>!a.ok&&a.d).sort((a,b)=>a.d.localeCompare(b.d));
+    const prox=abertas[0];
+    const sh=semHoras(), ct=credTotal();
+    $("#g-summary").innerHTML=`
+      <div class="stat"><span class="k">Créditos na estrutura</span><span class="v">${ct} / 44</span><span class="s muted">${44-ct} a cumprir</span></div>
+      <div class="stat"><span class="k">Seminário de Complementação</span><span class="v">${sh.tot} / 45 h</span><span class="s"><span class="pill ${sh.tot>=45?"ok":"wn"}">${sh.tot>=45?"concluído":"até fev/2029"}</span></span></div>
+      <div class="stat"><span class="k">Estágio Docência</span><span class="v">${estOk()} / 2</span><span class="s muted">semestres concluídos</span></div>
+      <div class="stat"><span class="k">Próxima ação</span><span class="v" style="font-size:16px">${prox?fmtD(prox.d):"–"}</span><span class="s">${prox?`<span class="pill ${prox.d<today?"no":mesesAte(prox.d)<=1?"wn":"nt"}">${prox.d<today?"atrasada":esc(prox.cat)}</span>`:""}</span></div>`;
+    $("#g-upd").textContent=G.updated?("Última alteração: "+new Date(G.updated).toLocaleString("pt-BR")):"Dados iniciais pré-carregados; nada alterado ainda.";
+
+    // ações
+    G.acoes.sort((a,b)=>(a.ok-b.ok)||(a.d||"9").localeCompare(b.d||"9"));
+    $("#g-acoes").innerHTML=table("acoes",[
+      {f:"ok",l:"Feito",t:"check"},{f:"d",l:"Data",t:"date"},{f:"t",l:"Ação"},
+      {f:"cat",l:"Tipo",t:"select",o:["Estágio","Seminário","Artigo","Qualificação","Defesa","Disciplina","Vínculo","Secretaria","Marco","Outro"]}
+    ],{rowCls:r=>r.ok?"g-done":(r.d&&r.d<today?"g-late":(r.d&&mesesAte(r.d)<=3?"g-soon":""))});
+
+    // créditos
+    $("#g-cred").innerHTML=`<div class="tablebox"><table><thead><tr><th>Componente</th><th style="text-align:right">Exigido</th><th style="text-align:right">Obtido</th><th>Situação</th><th>Observação</th></tr></thead><tbody>${
+      CRED.map(c=>{const o=Number(G.cred[c.k].o)||0; const st=o>=c.req?'<span class="pill ok">completo</span>':o>0?'<span class="pill wn">parcial</span>':'<span class="pill nt">pendente</span>';
+        return `<tr><td>${c.n} <span class="art">${c.a}</span></td><td class="num">${c.req}</td><td><input type="number" min="0" max="${c.req+12}" data-cred="${c.k}" data-f="o" value="${o}" aria-label="Créditos obtidos em ${esc(c.n)}" style="width:64px"></td><td>${st}</td><td><input type="text" data-cred="${c.k}" data-f="n" value="${esc(G.cred[c.k].n)}" aria-label="Observação"></td></tr>`}).join("")
+    }<tr><td><b>Total</b></td><td class="num"><b>44</b></td><td class="num"><b>${ct}</b></td><td colspan="2" class="small muted">Créditos acima do exigido em uma linha não contam em outra. Para defender: 38 créditos <span class="art">Art. 15 §1</span></td></tr></tbody></table></div>`;
+
+    // estágio
+    $("#g-est").innerHTML=table("est",[
+      {f:"sem",l:"Semestre",w:"80px"},{f:"per",l:"Período"},{f:"disc",l:"Disciplina"},{f:"sup",l:"Supervisor(a)"},
+      {f:"h",l:"h/sem",t:"number",w:"60px"},{f:"aula",l:"Deu aula",t:"check"},{f:"rel",l:"Relatório",t:"check"},
+      {f:"sit",l:"Situação",t:"select",o:["Planejado","Em andamento","Concluído","Cancelado"]}
+    ])+`<ul class="g-list">${[
+      chk(estOk()>=2,`Mínimo de 2 semestres no doutorado (${estOk()} concluído${estOk()===1?"":"s"})`,"Norma 004/2019 Art. 6 §4"),
+      chk(!G.est.some(e=>Number(e.h)>4),"Carga de até 4 h por semana","Norma Art. 3 §2"),
+      chk(G.est.filter(e=>e.sit==="Concluído").every(e=>e.rel),"Relatório entregue em cada semestre concluído","Norma Art. 2"),
+      chk(today<"2028-08-01","Dentro do prazo: até o 3º ano do curso (ago/2028)","Art. 20 §3")
+    ].join("")}</ul><p class="note">Ministrar aula é obrigatório, salvo para quem já é docente de ensino superior (o supervisor pode dispensar). O estágio do mestrado não vale para o doutorado, não pode ser feito no último semestre e o supervisor deve ser membro do PPGEC. Recursos da CAPES não podem remunerar o estágio.</p>`;
+
+    // seminário
+    $("#g-semi").innerHTML=table("semi",[
+      {f:"d",l:"Data",t:"date"},{f:"t",l:"Evento ou atividade"},
+      {f:"tipo",l:"Tipo",t:"select",o:Object.entries(STIPO).map(([k,v])=>[k,`${v.n} (${v.h} h/${v.u})`])},
+      {f:"q",l:"Qtd.",t:"number",w:"60px"},
+      {f:"h",l:"Horas",t:"calc",fn:r=>{const t=STIPO[r.tipo];return t?t.h*(Number(r.q)||0):0}},
+      {f:"cert",l:"Certificado na secretaria",t:"check"}
+    ],{rowCls:r=>(r.d&&r.d<"2025-08-01")?"g-late":""})+`<div class="g-bar" role="progressbar" aria-valuemin="0" aria-valuemax="45" aria-valuenow="${Math.min(45,sh.tot)}"><span style="width:${Math.min(100,sh.tot/45*100)}%"></span></div>
+      <p class="small muted">${sh.tot} de 45 h válidas. Limite de 20 h por grupo: apresentações ${Math.min(20,sh.byG.ap||0)}/20 · participação em conferências ${Math.min(20,sh.byG.pa||0)}/20 · cursos ${Math.min(20,sh.byG.curso||0)}/20 · representação ${Math.min(20,sh.byG.rep||0)}/20. Só valem atividades a partir de 08/2025 (linhas anteriores ficam em vermelho); horas do mestrado não são aproveitadas <span class="art">Art. 19 §6</span>.</p>`;
+
+    // artigos
+    $("#g-art").innerHTML=table("art",[
+      {f:"t",l:"Título"},{f:"vei",l:"Veículo"},
+      {f:"tipo",l:"Tipo",t:"select",o:["Periódico","Conferência","Capítulo"]},
+      {f:"qualis",l:"Qualis",t:"select",o:QUALIS},
+      {f:"st",l:"Status",t:"select",o:AST},
+      {f:"pa",l:"1º autor",t:"check"},{f:"rel",l:"Ligado à tese",t:"check"}
+    ])+`<ul class="g-list">${[
+      chk(artSubmetido(),"Para a qualificação: ao menos um artigo A4 ou superior submetido","Art. 32 §3"),
+      chk(artDefesa(),"Para a defesa: artigo aprovado em periódico A4 ou superior, como primeiro autor e ligado à pesquisa","Art. 45 §3")
+    ].join("")}</ul>`;
+
+    // qualificação
+    const discPct=(Number(G.cred.disc.o)||0)+(Number(G.cred.rsl.o)||0)+(Number(G.cred.proj.o)||0);
+    const q=G.qual, f=(k,l,t)=>`<label class="field">${l}<input type="${t||"text"}" data-q="${k}" value="${esc(q[k])}"></label>`;
+    $("#g-qual").innerHTML=`<div class="g-form">${f("titulo","Título do projeto de tese")}${f("data","Data prevista","date")}${f("interno","Membro interno do PPGEC")}${f("externo","Membro externo")}${f("terceiro","Terceiro membro")}${f("suplente","Suplente")}
+      <label class="field">Resultado<select data-q="res">${["","Aprovado","Conceito C (repetir uma vez)","Reprovado"].map(o=>`<option${o===q.res?" selected":""}>${o}</option>`).join("")}</select></label></div>
+      <label class="g-inline"><input type="checkbox" data-q="entregue" ${q.entregue?"checked":""}> Projeto entregue à coordenação no modelo do PPGEC</label>
+      <ul class="g-list">${[
+        chk(discPct>=23,`70% dos créditos em disciplinas, Projeto e RSL (${discPct} de 32; mínimo 23)`,"Art. 32 §3"),
+        chk((Number(G.cred.rsl.o)||0)>=4,"RSL cursada"),
+        chk((Number(G.cred.proj.o)||0)>=4,"Projeto de Pesquisa cursado"),
+        chk(artSubmetido(),"Artigo A4 ou superior submetido","Art. 32 §3"),
+        chk(q.entregue,"Projeto de tese entregue"),
+        chk(q.interno&&q.externo&&q.terceiro&&q.suplente,"Banca de 3 docentes além da orientação (≥ 1 interno, ≥ 1 externo) e suplente","Art. 31"),
+        chk(!q.data||q.data<="2028-02-29",`Data dentro do limite (fim do 5º semestre, ~fev/2028)${q.data?": "+fmtD(q.data):""}`,"Art. 31")
+      ].join("")}</ul>`;
+
+    // defesa
+    const d=G.def;
+    $("#g-def").innerHTML=`<div class="g-form"><label class="field">Data prevista<input type="date" data-d="data" value="${esc(d.data)}"></label><label class="field">Banca<input type="text" data-d="banca" value="${esc(d.banca)}"></label></div>
+      <label class="g-inline"><input type="checkbox" data-d="ra" ${d.ra?"checked":""}> RA ≥ 3,0 conferido na calculadora de RA</label>
+      <ul class="g-list">${[
+        chk(credTotal("def")>=38,`38 créditos antes da defesa (${credTotal("def")} na estrutura)`,"Art. 45 §1"),
+        chk(d.ra,"RA ≥ 3,0","Art. 45 §1"),
+        chk(q.res==="Aprovado","Qualificação aprovada","Art. 45 §2"),
+        chk(artDefesa(),"Artigo aprovado em periódico A4+ como primeiro autor","Art. 45 §3"),
+        chk(estOk()>=2,"Estágio Docência concluído","Art. 45 §5"),
+        chk(today>="2027-08-01"&&(!d.data||d.data>="2027-08-01"),"Prazo mínimo de 24 meses (a partir de ago/2027)","Art. 41"),
+        chk(!d.data||d.data<="2029-08-01","Dentro do prazo máximo de 48 meses (ago/2029), sem contar prorrogação","Art. 41, 43")
+      ].join("")}</ul>`;
+
+    // vínculo
+    $("#g-mat").innerHTML=`<div class="g-chips">${SEMS.map(s=>`<label class="g-chip"><input type="checkbox" data-mat="${s}" ${G.mat[s]?"checked":""}> ${s}</label>`).join("")}</div>
+      <p class="note">Marque cada semestre em que a matrícula de vínculo foi renovada. Sem ela, o desligamento é automático, mesmo sem disciplinas <span class="art">Art. 11 §7</span>. Ao fim de cada ano letivo o RA precisa ser ≥ 3,0 <span class="art">Art. 27 §5</span>.</p>`;
+
+    // pendências
+    $("#g-pend").innerHTML=table("pend",[{f:"ok",l:"Resolvido",t:"check"},{f:"t",l:"Pendência com a secretaria ou coordenação"}],{rowCls:r=>r.ok?"g-done":""});
+  }
+
+  /* ---------- eventos ---------- */
+  const root=document.getElementById("gestao");
+  root.addEventListener("change",e=>{
+    const el=e.target, val=el.type==="checkbox"?el.checked:el.value;
+    if(el.dataset.l){ G[el.dataset.l][+el.dataset.i][el.dataset.f]=val; return save(); }
+    if(el.dataset.cred){ G.cred[el.dataset.cred][el.dataset.f]=el.dataset.f==="o"?Math.max(0,Number(val)||0):val; return save(); }
+    if(el.dataset.q){ G.qual[el.dataset.q]=val; return save(); }
+    if(el.dataset.d){ G.def[el.dataset.d]=val; return save(); }
+    if(el.dataset.mat){ G.mat[el.dataset.mat]=val; return save(); }
+  });
+  root.addEventListener("click",e=>{
+    const a=e.target.closest("[data-add]"); if(a){ G[a.dataset.add].push(NEW[a.dataset.add]()); save(); return; }
+    const d=e.target.closest("[data-del]"); if(d){ if(confirm("Remover esta linha?")){ G[d.dataset.del].splice(+d.dataset.i,1); save(); } return; }
+  });
+  $("#g-export").addEventListener("click",()=>{
+    const blob=new Blob([JSON.stringify(G,null,2)],{type:"application/json"});
+    const u=URL.createObjectURL(blob), l=document.createElement("a");
+    l.href=u; l.download="gestao-doutorado-"+hoje()+".json"; document.body.appendChild(l); l.click(); l.remove(); setTimeout(()=>URL.revokeObjectURL(u),1000);
+  });
+  $("#g-import").addEventListener("change",e=>{
+    const f=e.target.files[0]; if(!f) return;
+    f.text().then(t=>{ const d=JSON.parse(t); if(!d||d.v!==1||!Array.isArray(d.acoes)) throw 0; G=d; save(); alert("Dados importados."); })
+     .catch(()=>alert("Arquivo inválido: use um JSON exportado por esta página."));
+    e.target.value="";
+  });
+  $("#g-reset").addEventListener("click",()=>{ if(confirm("Voltar aos dados iniciais? O que você editou neste navegador será apagado (exporte antes, se quiser guardar).")){ G=JSON.parse(JSON.stringify(SEED)); try{localStorage.removeItem(KEY)}catch(e){} renderAll(); } });
+  renderAll();
 })();
 </script>
 </body>
