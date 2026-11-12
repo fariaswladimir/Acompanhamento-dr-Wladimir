@@ -55,9 +55,9 @@ header.top .intro{padding-block:26px 24px;display:grid;gap:24px}
 .intro-top{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:20px 32px;align-items:start}
 .purpose{display:grid;gap:8px}
 .lead-main{font-size:clamp(16px,1.9vw,18px);line-height:1.55;color:var(--ink);max-width:56ch}
-.note{display:grid;gap:8px;background:var(--note-bg);border:1px solid var(--note-line);border-radius:10px;padding:14px 16px 16px}
-.note .label{color:var(--ochre)}
-.note p{font-size:14px;line-height:1.55;color:var(--ink)}
+.recado{display:grid;gap:8px;background:var(--note-bg);border:1px solid var(--note-line);border-radius:10px;padding:14px 16px 16px}
+.recado .label{color:var(--ochre)}
+.recado p{font-size:14px;line-height:1.55;color:var(--ink)}
 .support-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .sup{display:flex;flex-direction:column;gap:6px;border:1px solid var(--line);border-radius:10px;padding:14px 16px;background:var(--surface);min-width:0}
 .sup .k{font-size:12px;color:var(--muted)}
@@ -124,6 +124,8 @@ ol.tl .body{padding-bottom:18px;display:grid;gap:3px;min-width:0}
 ol.tl li.past .body h3{color:var(--muted)}
 ol.tl li.today .when{color:var(--ochre);font-weight:600}
 .note{font-size:13px;color:var(--muted);border-left:3px solid var(--line);padding-left:10px}
+.warn-note{background:var(--accent-soft);border-left:4px solid var(--accent);color:var(--ink);padding:14px 16px;border-radius:8px}
+.warn-note .art{background:var(--surface)}
 
 /* calculadora */
 .tablebox{overflow-x:auto}
@@ -131,6 +133,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}
 th{font-size:12px;font-weight:600;color:var(--muted);text-align:left;padding:6px 6px;border-bottom:1px solid var(--line)}
 td{padding:6px;border-bottom:1px solid var(--line);vertical-align:middle}
 td input[type=text]{width:100%;min-width:150px}
+@media (max-width:560px){td input[type=text]{min-width:0}td input[type=number]{width:52px}th,td{padding:5px 3px}.col-pts{display:none}table{table-layout:auto}}
 td input[type=number]{width:64px;font-family:var(--f-mono)}
 td.num{font-family:var(--f-mono);text-align:right;font-variant-numeric:tabular-nums}
 .btn{font:600 14px var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:6px;padding:7px 12px;cursor:pointer}
@@ -211,7 +214,7 @@ footer a{color:var(--accent)}
         <span class="label">Para que serve</span>
         <p class="lead-main">Aqui você consegue ver seus prazos, calcular seu RA, conferir se já pode marcar a defesa de qualificação ou a defesa de dissertação/tese com a sua orientadora, e saber o que pode te levar ao desligamento do programa.</p>
       </div>
-      <aside class="note" aria-label="Recado da orientadora">
+      <aside class="recado" aria-label="Recado da orientadora">
         <span class="label">Recado da orientadora</span>
         <p>Sempre que tiver dúvidas, use esse guia! Antes de levar mais um estresse para sua orientadora, use esse guia! Quando o guia não resolver, leia o Regimento Interno do PPGEC.</p>
       </aside>
@@ -259,7 +262,7 @@ footer a{color:var(--accent)}
       </div>
       <div class="progress" id="progress"></div>
       <ol class="tl" id="timeline"></ol>
-      <p class="note">Renove a <b>matrícula de vínculo</b> todo semestre, mesmo sem disciplinas. Sem ela, o desligamento é automático <span class="art">Art. 11 §7</span>.</p>
+      <p class="note warn-note"><b>Todo semestre, renove a matrícula de vínculo</b>, mesmo sem cursar disciplinas. Sem ela, o desligamento é automático <span class="art">Art. 11 §7</span></p>
     </div>
   </section>
 
@@ -272,7 +275,7 @@ footer a{color:var(--accent)}
     <div class="panel" style="display:grid;gap:14px">
       <div class="tablebox">
         <table>
-          <thead><tr><th scope="col">Disciplina ou atividade</th><th scope="col">Créditos</th><th scope="col">Conceito</th><th scope="col" style="text-align:right">Pontos</th><th scope="col"><span class="sr" style="position:absolute;left:-9999px">Remover</span></th></tr></thead>
+          <thead><tr><th scope="col">Disciplina ou atividade</th><th scope="col">Créditos</th><th scope="col">Conceito</th><th scope="col" class="col-pts" style="text-align:right">Pontos</th><th scope="col"><span class="sr" style="position:absolute;left:-9999px">Remover</span></th></tr></thead>
           <tbody id="rows"></tbody>
         </table>
       </div>
@@ -288,7 +291,7 @@ footer a{color:var(--accent)}
         <span><b>I</b> incompleto, vira A–D em até 6 meses</span>
         <span><b>T</b> cancelada</span>
         <span><b>X</b> abandono, conta como D</span>
-        <span><b>O</b> aproveitada de outro curso, dá crédito</span>
+        <span><b>O→A / O→B</b> aproveitada de outro curso, vale como A ou B</span>
         <span class="art">Art. 27</span>
       </div>
     </div>
@@ -319,10 +322,10 @@ footer a{color:var(--accent)}
       <p class="muted">Quando o guia não resolver, consulte o regimento ou fale com a secretaria e a coordenação.</p>
     </div>
     <div class="support-grid">
-        <a class="sup doc" href="https://w2.solucaoatrio.net.br/somos/upe-ppgec/index.php/pt/downloads/finish/5-regimento-resolucoes-e-normas/734-regimento-interno-2024" target="_blank" rel="noopener">
+        <a class="sup doc" href="https://w2.solucaoatrio.net.br/somos/upe-ppgec/index.php/pt/downloads/viewcategory/5-regimento-resolucoes-e-normas" target="_blank" rel="noopener">
           <span class="k">Documento oficial</span>
           <span class="v">Regimento Interno (versão 2024)</span>
-          <span class="go">Abrir PDF ↗</span>
+          <span class="go">Abrir página de downloads ↗</span>
         </a>
         <div class="sup contact"><span class="k">Secretaria</span><span class="mail">secretaria_ppgec@ecomp.poli.br</span><button type="button" class="copy" data-copy="secretaria_ppgec@ecomp.poli.br">Copiar</button></div>
         <div class="sup contact"><span class="k">Coordenação</span><span class="mail">coordenacao.ppgec@upe.br</span><button type="button" class="copy" data-copy="coordenacao.ppgec@upe.br">Copiar</button></div>
@@ -335,7 +338,7 @@ footer a{color:var(--accent)}
 <footer>
   <div class="wrap">
     <p>Este guia resume o Regimento Interno do PPGEC aprovado em 01/02/2024 e não o substitui. Em caso de dúvida, vale o texto do regimento; casos omissos são decididos pelo Colegiado <span class="art">Art. 56</span>.</p>
-    <p>Texto oficial: <a href="https://w2.solucaoatrio.net.br/somos/upe-ppgec/index.php/pt/downloads/finish/5-regimento-resolucoes-e-normas/734-regimento-interno-2024" target="_blank" rel="noopener">Regimento Interno (versão 2024)</a></p>
+    <p>Texto oficial: <a href="https://w2.solucaoatrio.net.br/somos/upe-ppgec/index.php/pt/downloads/viewcategory/5-regimento-resolucoes-e-normas" target="_blank" rel="noopener">Regimento Interno (versão 2024)</a></p>
     <p>Site: <a href="http://www.ppgec.upe.br" target="_blank" rel="noopener">www.ppgec.upe.br</a> · Telefone: (81) 3184-7548</p>
   </div>
 </footer>
@@ -348,7 +351,8 @@ footer a{color:var(--accent)}
     d:{ name:"Doutorado", min:24, max:48, ext:12, extSplit:"6 + 6 meses", totalCred:44, defendCred:38, discCred:32, projPct:.7,
         projName:"exame de qualificação", work:"tese" }
   };
-  const VAL = {A:4,B:3,C:2,D:0,X:0};
+  const VAL = {A:4,B:3,C:2,D:0,X:0,OA:4,OB:3};
+  const GLABEL = {OA:"O→A",OB:"O→B"};
   const API = "COLE_AQUI_A_URL_DO_APPS_SCRIPT";
   let TOKEN = null; try{ TOKEN = new URLSearchParams(location.search).get("a") }catch(e){}
   if(TOKEN && !/^[a-f0-9]{8,40}$/.test(TOKEN)) TOKEN = null;
@@ -387,7 +391,7 @@ footer a{color:var(--accent)}
     state.rows.forEach(r=>{
       const c=Math.max(0,Number(r.c)||0);
       if(r.g in VAL){ pts+=VAL[r.g]*c; raCred+=c; }
-      if(["A","B","C","O"].includes(r.g)) cred+=c;
+      if(["A","B","C","O","OA","OB"].includes(r.g)) cred+=c;
       if(r.g==="D"||r.g==="X") ds++;
       if(r.g==="I") inc++;
     });
@@ -430,19 +434,19 @@ footer a{color:var(--accent)}
     const span=L.max+L.ext, pct=Math.max(0,Math.min(100, el/span*100)), maxPct=L.max/span*100;
     pr.innerHTML=`<div class="track" aria-hidden="true"><div class="ext" style="left:${maxPct}%;right:0"></div><div class="fill" style="width:${pct}%"></div></div>
       <div class="track-labels"><span>início</span><span>prazo máx. · mês ${L.max}</span><span>+${L.ext} prorrogação</span></div>`;
-    return {el, L};
+    return (today && el>=0) ? {el, L} : null;
   }
 
   function renderRows(){
     const tb=$("#rows");
     tb.innerHTML = state.rows.map((r,i)=>{
       const p = (r.g in VAL) ? (VAL[r.g]*(Number(r.c)||0)).toFixed(0) : "–";
-      const opts=["A","B","C","D","I","T","X","O"].map(g=>`<option${g===r.g?" selected":""}>${g}</option>`).join("");
+      const opts=["A","B","C","D","I","T","X","OA","OB"].map(g=>`<option value="${g}"${g===r.g?" selected":""}>${GLABEL[g]||g}</option>`).join("");
       return `<tr>
         <td><input type="text" id="n-${i}" data-i="${i}" data-f="n" value="${esc(r.n)}" aria-label="Nome da disciplina"></td>
         <td><input type="number" id="c-${i}" data-i="${i}" data-f="c" min="0" max="12" value="${esc(r.c)}" aria-label="Créditos"></td>
         <td><select id="g-${i}" data-i="${i}" data-f="g" aria-label="Conceito">${opts}</select></td>
-        <td class="num">${p}</td>
+        <td class="num col-pts">${p}</td>
         <td><button type="button" class="icon-btn" data-del="${i}" aria-label="Remover ${esc(r.n)}">×</button></td>
       </tr>`;
     }).join("") || `<tr><td colspan="5" class="muted small" style="padding:14px 6px">Nenhuma disciplina ainda. Use “Adicionar disciplina”.</td></tr>`;
@@ -544,7 +548,7 @@ footer a{color:var(--accent)}
     const msg=c.ra===null?"lance ao menos uma disciplina com conceito A, B, C, D ou X":c.ra>=3?"acima do mínimo de 3,0":"abaixo do mínimo de 3,0: risco de desligamento";
     $("#ra-result").innerHTML=`<div class="ra-big"><span class="k">Seu RA</span><span class="v">${raTxt}</span><span class="pill ${cls}">${msg}</span></div>
       <div class="ra-calc"><span class="k">Como foi calculado</span><code>${parts.length?`(${parts.join(" + ")}) ÷ ${cr} = ${pts} ÷ ${cr} = ${raTxt}`:"sem disciplinas com conceito"}</code>
-      <span class="small muted">Créditos obtidos: <b>${c.cred}</b> de ${L.totalCred} · ${L.defendCred} para defender. Conceitos I, T e O não entram no RA; O conta crédito.</span></div>`;
+      <span class="small muted">Créditos obtidos: <b>${c.cred}</b> de ${L.totalCred} · ${L.defendCred} para defender. Conceitos I e T não entram no RA; disciplinas aproveitadas (O) contam como A ou B, conforme decidido na transferência <span class="art">Art. 27 §4</span>.</span></div>`;
   }
   function save(){ store.set("rows",state.rows); store.set("checks",state.checks); store.set("level",state.level); store.set("start",$("#start").value); scheduleSync(); }
 
