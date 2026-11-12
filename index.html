@@ -225,8 +225,9 @@ footer a{color:var(--accent)}
 <div class="bar">
   <div class="wrap">
     <div class="seg" role="group" aria-label="Nível">
-      <button type="button" id="lv-m" aria-pressed="true" data-level="m">Mestrado</button>
-      <button type="button" id="lv-d" aria-pressed="false" data-level="d">Doutorado</button>
+      <button type="button" id="lv-m1" aria-pressed="false" data-view="m1">1º mestrado</button>
+      <button type="button" id="lv-m2" aria-pressed="false" data-view="m2">2º mestrado</button>
+      <button type="button" id="lv-d" aria-pressed="true" data-level="d" data-view="live">Doutorado</button>
     </div>
     <nav aria-label="Seções">
       <a href="#prazos">Prazos</a><a href="#ra">RA e créditos</a><a href="#posso">Posso marcar?</a><a href="#desligamento">Desligamento</a><a href="#apoio">Apoio</a>
@@ -236,6 +237,15 @@ footer a{color:var(--accent)}
 
 <main>
 <div class="wrap">
+
+  <section class="hist" id="hist" hidden>
+    <span class="eyebrow" id="h-eyebrow"></span>
+    <h2 id="h-title"></h2>
+    <p class="muted" id="h-note"></p>
+    <div class="panel" style="overflow-x:auto"><table><thead><tr><th>Período</th><th>Disciplina</th><th style="text-align:right">Créditos</th><th>Conceito</th><th>Observação</th></tr></thead><tbody id="h-rows"></tbody></table></div>
+    <div class="panel" id="h-sum" style="margin-top:12px"></div>
+    <div class="panel" id="h-acts" style="margin-top:12px;overflow-x:auto"></div>
+  </section>
 
   <div class="sync" id="sync" hidden>
     <div class="grow who"><span id="sync-who">Carregando seus dados…</span><small id="sync-sub">O que você preencher aqui é enviado automaticamente para sua orientadora.</small></div>
@@ -373,7 +383,7 @@ footer a{color:var(--accent)}
     {n:"Revisão Sistemática da Literatura (2026/1, nota 10)",c:4,g:"A"}
   ];
   let state = {
-    level: store.get("level","d"),
+    level: "d",
     rows: store.get("rows", TOKEN ? [] : EXAMPLE.map(r=>({...r}))),
     checks: store.get("checks", {}),
     start: store.get("start","2025-08")
@@ -539,7 +549,7 @@ footer a{color:var(--accent)}
   }
 
   function renderAll(){
-    document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.level===state.level));
+    
     const c=calc(), t=renderTimeline();
     renderSummary(c,t); renderChecks(c); renderRisks(c); renderRA(c);
   }
@@ -556,7 +566,7 @@ footer a{color:var(--accent)}
   }
   function save(){ store.set("rows",state.rows); store.set("checks",state.checks); store.set("level",state.level); store.set("start",$("#start").value); scheduleSync(); }
 
-  document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>{ state.level=b.dataset.level; save(); renderAll(); }));
+  
   $("#start").addEventListener("input",()=>{ save(); renderAll(); });
   $("#today").addEventListener("input",renderAll);
   $("#rows").addEventListener("input",e=>{
@@ -651,5 +661,56 @@ footer a{color:var(--accent)}
 })();
 </script>
 
+<script>
+(function(){
+  const H={
+    m1:{eb:"Histórico · Mestrado",title:"1ª vez: 2019/2 a 2020/2",note:"Somente leitura. Linhas de matrícula em duplicidade (“Inscrito”) foram omitidas.",
+      rows:[
+        ["2019/2","Aplicações em Engenharia de Software",4,"A",""],
+        ["2019/2","Mineração de Dados",4,"C","Conceito C* no histórico"],
+        ["2019/2","Probabilidade e Processos Estocásticos",4,"D","Média 4,175; sem direito a crédito (Art. 27). Refeita em 2020/2"],
+        ["2020/1","Didática do Ensino Superior",2,"A","Online, nota 9,1"],
+        ["2020/1","Engenharia de Requisitos",4,"A","Online"],
+        ["2020/1","Metodologia Científica",2,"A","Online, nota 9,1"],
+        ["2020/1","Tópicos Avançados em Engenharia de Software",4,"A","Online"],
+        ["2020/2","Probabilidade e Processos Estocásticos",4,"B","Freq. 90%"]],
+      acts:[["2021/1","Horas Complementares (Seminário)",3,45,"Completo",""]],
+      pend:[["30/07/2021","Estágio Docência","Pendente nesta entrada (admissão Seleção Regular Mestrado 2019.2)"]]},
+    m2:{eb:"Histórico · Mestrado",title:"2ª vez: 2022/1 a 2023/1",note:"Somente leitura. Várias disciplinas foram aproveitadas da primeira entrada.",
+      rows:[
+        ["2022/1","Aplicações em Engenharia de Software",4,"A","Aproveitada da 1ª entrada (cursada em 2019/2)"],
+        ["2022/2","Engenharia de Requisitos",4,"A","Modelo híbrido"],
+        ["2022/2","Probabilidade e Processos Estocásticos",4,"B","Aproveitada da 1ª entrada (cursada em 2020/2)"],
+        ["2022/2","Tópicos Avançados em Engenharia de Software",4,"A","Aproveitada da 1ª entrada (cursada em 2020/1)"],
+        ["2023/1","Metodologia Científica e Didática do Ensino Superior",4,"A","Online, nota 9, freq. 100%"]],
+      acts:[["2022/2","Horas Complementares (Seminário)",2,45,"Concluído",""],
+            ["2024/2","Estágio Docência",4,60,"Concluído","Engenharia de Requisitos (graduação e mestrado), 18/10/2023 a 21/03/2024, Profa. Maria Lencastre"]],
+      pend:[["04/08/2023","Estágio Docência","Ainda consta como pendente no sistema (admissão Seleção Regular Mestrado 2022.2), apesar do estágio concluído em 2024/2. Peça à secretaria para vincular a realização."]]}
+  };
+  const V={A:4,B:3,C:2,D:0};
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const live=()=>[...document.querySelectorAll("#sync,#summary,main section:not(.hist),.bar nav")];
+  function show(k){
+    document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.view===k)));
+    const h=H[k];
+    $("#hist").hidden=!h;
+    live().forEach(e=>{ if(h) e.dataset.wasHidden=e.hidden?"1":"", e.style.display="none"; else e.style.display=""; });
+    if(!h) return;
+    $("#h-eyebrow").textContent=h.eb; $("#h-title").textContent=h.title; $("#h-note").textContent=h.note;
+    $("#h-rows").innerHTML=h.rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td class="num">${r[2]}</td><td><span class="pill ${r[3]==="D"?"no":"ok"}">${r[3]}</span></td><td class="small muted">${esc(r[4])}</td></tr>`).join("");
+    let pts=0,cr=0,got=0;
+    h.rows.forEach(r=>{pts+=V[r[3]]*r[2];cr+=r[2];if(r[3]!=="D")got+=r[2];});
+    const ra=(pts/cr).toFixed(2).replace(".",",");
+    const A=h.acts||[], P=h.pend||[];
+    $("#h-acts").innerHTML="<b>Atividades sem conceito</b> <span class=\"muted small\">(não entram no RA)</span>"+
+      "<table><thead><tr><th>Período</th><th>Atividade</th><th style=\"text-align:right\">Créd.</th><th style=\"text-align:right\">Horas</th><th>Situação</th></tr></thead><tbody>"+
+      A.map(a=>`<tr><td>${esc(a[0])}</td><td>${esc(a[1])}${a[5]?`<div class="small muted">${esc(a[5])}</div>`:""}</td><td class="num">${a[2]}</td><td class="num">${a[3]}</td><td>${esc(a[4])}</td></tr>`).join("")+"</tbody></table>"+
+      (P.length?"<p class=\"small\" style=\"margin-top:10px\"><b>Pendências no sistema</b></p>"+P.map(x=>`<p class="small muted">${esc(x[0])} · ${esc(x[1])}: ${esc(x[2])}</p>`).join(""):"");
+    $("#h-sum").innerHTML=`<b>RA: ${ra}</b> <span class="muted small">(${pts} ÷ ${cr}, ponderado pelos créditos, Art. 28)</span><br><span class="small muted">Créditos cursados: ${cr} · com direito a crédito: ${got}</span>`;
+  }
+  document.querySelector(".seg").addEventListener("click",e=>{const b=e.target.closest("button[data-view]"); if(b) show(b.dataset.view);});
+})();
+</script>
 </body>
 </html>
