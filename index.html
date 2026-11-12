@@ -145,6 +145,19 @@ ul.risks li.hit .txt p{color:var(--ink)}
 footer{border-top:1px solid var(--line);background:var(--surface)}
 footer .wrap{padding-block:22px;display:grid;gap:6px;font-size:13px;color:var(--muted)}
 footer a{color:var(--accent)}
+.sync{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:8px;padding:12px 14px}
+.sync.err{border-left-color:var(--bad)}
+.sync .who{font-weight:600}
+.sync .who small{display:block;font-weight:400;color:var(--muted);font-size:13px}
+.sync .grow{flex:1;min-width:200px}
+.doc-link{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:14px;color:var(--accent);text-decoration:none;border:1px solid var(--line);border-radius:6px;padding:7px 12px;background:var(--bg)}
+.doc-link:hover{border-color:var(--accent)}
+.contacts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:8px;max-width:680px}
+.contact{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;border:1px solid var(--line);border-radius:8px;padding:9px 12px;background:var(--bg);min-width:0}
+.contact .k{font-size:12px;color:var(--muted);width:100%}
+.contact .mail{font-family:var(--f-mono);font-size:13px;color:var(--ink);user-select:all;overflow-wrap:anywhere;flex:1;min-width:0}
+.copy{font:600 12px var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--accent);border-radius:5px;padding:4px 10px;cursor:pointer}
+.copy:hover{border-color:var(--accent)}
 
 @media (max-width:520px){
   ol.tl li{grid-template-columns:64px 16px 1fr;gap:8px}
@@ -164,6 +177,11 @@ footer a{color:var(--accent)}
     <span class="eyebrow">Regimento Interno 2024</span>
     <h1>Guia do Discente PPGEC</h1>
     <p class="lead">O regimento traduzido em ferramentas: veja seus prazos, calcule seu RA, confira se já pode marcar projeto, qualificação ou defesa, e saiba o que leva ao desligamento. Cada regra cita o artigo de origem.</p>
+    <p><a class="doc-link" href="https://w2.solucaoatrio.net.br/somos/upe-ppgec/index.php/pt/downloads/finish/5-regimento-resolucoes-e-normas/734-regimento-interno-2024" target="_blank" rel="noopener">Regimento Interno (versão 2024) ↗</a></p>
+    <div class="contacts">
+      <div class="contact"><span class="k">Secretaria</span><span class="mail">secretaria_ppgec@ecomp.poli.br</span><button type="button" class="copy" data-copy="secretaria_ppgec@ecomp.poli.br">Copiar</button></div>
+      <div class="contact"><span class="k">Coordenação</span><span class="mail">coordenacao.ppgec@upe.br</span><button type="button" class="copy" data-copy="coordenacao.ppgec@upe.br">Copiar</button></div>
+    </div>
   </div>
 </header>
 
@@ -181,6 +199,12 @@ footer a{color:var(--accent)}
 
 <main>
 <div class="wrap">
+
+  <div class="sync" id="sync" hidden>
+    <div class="grow who"><span id="sync-who">Carregando seus dados…</span><small id="sync-sub">O que você preencher aqui é enviado automaticamente para sua orientadora.</small></div>
+    <span class="pill nt" id="sync-status" aria-live="polite">conectando</span>
+    <button type="button" class="btn" id="sync-retry" hidden>Tentar de novo</button>
+  </div>
 
   <div class="summary" id="summary" aria-live="polite"></div>
 
@@ -259,7 +283,8 @@ footer a{color:var(--accent)}
 <footer>
   <div class="wrap">
     <p>Este guia resume o Regimento Interno do PPGEC aprovado em 01/02/2024 e não o substitui. Em caso de dúvida, vale o texto do regimento; casos omissos são decididos pelo Colegiado <span class="art">Art. 56</span>.</p>
-    <p>Secretaria do PPGEC: <a href="http://www.ppgec.upe.br" target="_blank" rel="noopener">www.ppgec.upe.br</a> · (81) 3184-7548</p>
+    <p>Texto oficial: <a href="https://w2.solucaoatrio.net.br/somos/upe-ppgec/index.php/pt/downloads/finish/5-regimento-resolucoes-e-normas/734-regimento-interno-2024" target="_blank" rel="noopener">Regimento Interno (versão 2024)</a></p>
+    <p>Site: <a href="http://www.ppgec.upe.br" target="_blank" rel="noopener">www.ppgec.upe.br</a> · Telefone: (81) 3184-7548</p>
   </div>
 </footer>
 
@@ -272,9 +297,14 @@ footer a{color:var(--accent)}
         projName:"exame de qualificação", work:"tese" }
   };
   const VAL = {A:4,B:3,C:2,D:0,X:0};
+  const API = "COLE_AQUI_A_URL_DO_APPS_SCRIPT";
+  let TOKEN = null; try{ TOKEN = new URLSearchParams(location.search).get("a") }catch(e){}
+  if(TOKEN && !/^[a-f0-9]{8,40}$/.test(TOKEN)) TOKEN = null;
+  const SYNC = !!TOKEN && /^https:\/\/script\.google\.com\//.test(API);
+  const PFX = "ppgec:" + (TOKEN ? TOKEN + ":" : "");
   const store = {
-    get(k,d){ try{ const v=localStorage.getItem("ppgec:"+k); return v?JSON.parse(v):d }catch(e){ return d } },
-    set(k,v){ try{ localStorage.setItem("ppgec:"+k, JSON.stringify(v)) }catch(e){} }
+    get(k,d){ try{ const v=localStorage.getItem(PFX+k); return v?JSON.parse(v):d }catch(e){ return d } },
+    set(k,v){ try{ localStorage.setItem(PFX+k, JSON.stringify(v)) }catch(e){} }
   };
   const EXAMPLE = [
     {n:"Obrigatória 1 (exemplo)",c:4,g:"A"},
@@ -284,7 +314,7 @@ footer a{color:var(--accent)}
   ];
   let state = {
     level: store.get("level","m"),
-    rows: store.get("rows", EXAMPLE.map(r=>({...r}))),
+    rows: store.get("rows", TOKEN ? [] : EXAMPLE.map(r=>({...r}))),
     checks: store.get("checks", {}),
     start: store.get("start","2025-03")
   };
@@ -453,7 +483,7 @@ footer a{color:var(--accent)}
     const c=calc(), t=renderTimeline();
     renderSummary(c,t); renderChecks(c); renderRisks(c);
   }
-  function save(){ store.set("rows",state.rows); store.set("checks",state.checks); store.set("level",state.level); store.set("start",$("#start").value) }
+  function save(){ store.set("rows",state.rows); store.set("checks",state.checks); store.set("level",state.level); store.set("start",$("#start").value); scheduleSync(); }
 
   document.querySelectorAll(".seg button").forEach(b=>b.addEventListener("click",()=>{ state.level=b.dataset.level; save(); renderAll(); }));
   $("#start").addEventListener("input",()=>{ save(); renderAll(); });
@@ -481,7 +511,72 @@ footer a{color:var(--accent)}
     state.checks[k]=e.target.checked; save(); renderAll();
   });
 
+  document.querySelectorAll(".copy").forEach(b=>b.addEventListener("click",()=>{
+    const done=()=>{ b.textContent="Copiado"; setTimeout(()=>b.textContent="Copiar",1600) };
+    const sel=()=>{ const r=document.createRange(); r.selectNodeContents(b.previousElementSibling); const s=getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent="Selecionado"; setTimeout(()=>b.textContent="Copiar",1600) };
+    try{ navigator.clipboard.writeText(b.dataset.copy).then(done,sel) }catch(e){ sel() }
+  }));
+
+  // ---------- sincronização com a orientadora ----------
+  let loaded=false, timer=null, sending=false, pending=false;
+  function status(txt, cls){ const el=$("#sync-status"); el.textContent=txt; el.className="pill "+cls; }
+  function api(body){
+    return fetch(API,{method:"POST",body:JSON.stringify(body)}).then(r=>r.json());
+  }
+  function hora(iso){ try{ const d=new Date(iso); return d.toLocaleDateString("pt-BR")+" às "+d.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}) }catch(e){ return "" } }
+  function scheduleSync(){
+    if(!SYNC || !loaded) return;
+    status("alterações a enviar","wn");
+    clearTimeout(timer); timer=setTimeout(send, 1500);
+  }
+  function send(){
+    if(sending){ pending=true; return; }
+    sending=true; status("enviando…","nt"); $("#sync-retry").hidden=true; $("#sync").classList.remove("err");
+    const c=calc();
+    api({acao:"salvar", token:TOKEN, nivel:state.level, inicio:$("#start").value,
+         ra: c.ra===null?"":c.ra.toFixed(2), creditos:c.cred, ds:c.ds,
+         dados:{rows:state.rows, checks:state.checks, level:state.level, start:$("#start").value}})
+      .then(r=>{ if(!r.ok) throw new Error(r.erro); status("salvo em "+hora(r.atualizado),"ok"); })
+      .catch(err=>{ status("não foi enviado","no"); $("#sync").classList.add("err"); $("#sync-retry").hidden=false; $("#sync-sub").textContent = "Verifique sua internet e tente de novo. "+(err&&err.message?"("+err.message+")":""); })
+      .finally(()=>{ sending=false; if(pending){ pending=false; send(); } });
+  }
+  $("#sync-retry").addEventListener("click", send);
+
+  function initSync(){
+    if(!TOKEN) return;
+    $("#sync").hidden=false;
+    if(!SYNC){ $("#sync-who").textContent="Link pessoal ainda não ativado"; $("#sync-sub").textContent="Este guia ainda não foi conectado à planilha da orientadora. Seus dados ficam salvos só neste navegador."; status("sem conexão","nt"); return; }
+    api({acao:"aluno", token:TOKEN}).then(r=>{
+      if(!r.ok) throw new Error(r.erro);
+      const a=r.aluno;
+      $("#sync-who").textContent = "Guia de " + (a.nome || "orientando");
+      let d=null; try{ d = a.dados ? JSON.parse(a.dados) : null }catch(e){}
+      if(d){
+        state.rows = Array.isArray(d.rows)? d.rows : [];
+        state.checks = d.checks || {};
+        state.level = d.level==="d"?"d":"m";
+        if(d.start) $("#start").value = d.start;
+        status("salvo em "+hora(a.atualizado),"ok");
+      } else {
+        state.level = a.nivel==="d"?"d":"m";
+        if(a.inicio) $("#start").value = a.inicio;
+        status("primeiro acesso","wn");
+        $("#sync-sub").textContent = "Bem-vindo! Confira o mês da sua primeira matrícula e lance suas disciplinas. Tudo é enviado automaticamente para sua orientadora.";
+      }
+      loaded=true;
+      store.set("rows",state.rows); store.set("checks",state.checks); store.set("level",state.level); store.set("start",$("#start").value);
+      renderRows(); renderAll();
+      if(!d) send();
+    }).catch(err=>{
+      $("#sync").classList.add("err");
+      $("#sync-who").textContent = "Não foi possível carregar seus dados";
+      $("#sync-sub").textContent = (err && err.message ? err.message + " " : "") + "Peça um novo link à sua orientadora se o problema continuar.";
+      status("erro","no");
+    });
+  }
+
   renderRows(); renderAll();
+  initSync();
 })();
 </script>
 
